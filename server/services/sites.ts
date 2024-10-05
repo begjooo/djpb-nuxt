@@ -1,8 +1,8 @@
 import * as fs from "node:fs";
 import { getSharePointFile, pdfParse } from "./file-handler";
-import { getGraphClient } from "./graph-credential";
 import { processTextWithGemini } from "./gemini-ai";
 import { extractKegiatanJsonPrompt, extractKegiatanJsonPrompt2, extractKegiatanJsonSchema, extractKegiatanJsonSchema2, extractKegiatanPrompt, promptMap, testPrompt } from "./prompt";
+import { graphClient } from "../init-graph";
 
 const { defaultSiteId, defaultDriveId, defaultListId } = useRuntimeConfig();
 
@@ -27,8 +27,15 @@ export const mandatoryColumns = [
 ];
 
 export async function mapFilesAndFolders(itemId?: string): Promise<any> {
-  const graphClient = await getGraphClient();
-  const driveItems = await graphClient.api(`/sites/${defaultSiteId}/drive/items/${itemId}/children?expand=listItem`).get();
+  let driveItems = null;
+  try {
+    driveItems = await graphClient
+      .api(`/sites/${defaultSiteId}/drive/items/${itemId}/children?expand=listItem`)
+      .get();
+  } catch (error) {
+    return error;
+  };
+
   const items = driveItems.value.map((item: any) => {
     if(item.folder){
       item.type = 'folder';
@@ -62,7 +69,7 @@ export async function mapFilesAndFolders(itemId?: string): Promise<any> {
   return children;
 };
 
-async function getSiteColumns(graphClient: any, listId?: string): Promise<any> {
+async function getSiteColumns(listId?: string): Promise<any> {
   let api = '';
   if(listId){
     api = `/sites/${defaultSiteId}/lists/${listId}/columns`;
@@ -73,7 +80,7 @@ async function getSiteColumns(graphClient: any, listId?: string): Promise<any> {
   return columns.value;
 };
 
-async function createSiteColumn(graphClient: any, displayName: string, listId?: string): Promise<void> {
+async function createSiteColumn(displayName: string, listId?: string): Promise<void> {
   console.log(`create ${displayName} column in SharePoint Sites`);
   const name = displayName.replace(/ /g, '');
   let columnDefinition = {
@@ -98,9 +105,9 @@ async function createSiteColumn(graphClient: any, displayName: string, listId?: 
 
 };
 
-export async function setMandatorySiteColumns(graphClient: any, listId?:string): Promise<void> {
+export async function setMandatorySiteColumns(listId?:string): Promise<void> {
   console.log(`check mandatory columns in SharePoint Sites`);
-  const columnList = await getSiteColumns(graphClient);
+  const columnList = await getSiteColumns();
   const columnListName = columnList.map((column: any) => column.displayName);
   const notExistColumns = mandatoryColumns.filter((columnName: any) => {
     return !columnListName.includes(columnName);
@@ -110,7 +117,7 @@ export async function setMandatorySiteColumns(graphClient: any, listId?:string):
     console.log(`create mandatory columns in SharePoint Sites`);
     for await (const column of notExistColumns){
       try {
-        await createSiteColumn(graphClient, column);
+        await createSiteColumn(column);
       } catch (error) {
         throw error;
       };
@@ -121,7 +128,7 @@ export async function setMandatorySiteColumns(graphClient: any, listId?:string):
   };
 };
 
-export async function getDriveItem(graphClient: any, driveItemId: any): Promise<any> {
+export async function getDriveItem(driveItemId: any): Promise<any> {
     const driveItem = await graphClient
     .api(`/sites/${defaultSiteId}/drive/items/${driveItemId}?expand=listItem`)
     .get();
@@ -136,11 +143,13 @@ export async function getDriveItem(graphClient: any, driveItemId: any): Promise<
   };
 };
 
-export async function updateSiteColumns(graphClient: any, itemId: string, column: SiteColumn): Promise<void> {
-  await graphClient.api(`/sites/${defaultSiteId}/lists/${defaultListId}/items/${itemId}/fields`,).update(column);
+export async function updateSiteColumns(itemId: string, column: SiteColumn): Promise<void> {
+  await graphClient
+    .api(`/sites/${defaultSiteId}/lists/${defaultListId}/items/${itemId}/fields`,)
+    .update(column);
 };
 
-async function fillTextFormat(graphClient: any, file: DriveFile): Promise<void> {
+async function fillTextFormat(file: DriveFile): Promise<void> {
   if(file.fields['TextFormat'] === undefined || file.fields['TextFormat'] === ''){
     console.log('fill Text Format column');
     await getSharePointFile(file);
@@ -148,7 +157,7 @@ async function fillTextFormat(graphClient: any, file: DriveFile): Promise<void> 
     const validText = pdfText.replace(/[\x00]/g, '');
     console.log(`updating Text Format column in SharePoint`);
     try {
-      await updateSiteColumns(graphClient, file.itemId, { 'TextFormat': validText });
+      await updateSiteColumns(file.itemId, { 'TextFormat': validText });
     } catch (error) {
       throw error;
     };
@@ -157,7 +166,7 @@ async function fillTextFormat(graphClient: any, file: DriveFile): Promise<void> 
   console.log('Text Format column is up to date');
 };
 
-async function fillKegiatanJson(graphClient: any, file: DriveFile): Promise<void> {
+async function fillKegiatanJson(file: DriveFile): Promise<void> {
   if(file.fields['KegiatanJSON'] === undefined || file.fields['KegiatanJSON'] === ''){
     console.log(`fill Kegiatan JSON column`);
     // console.time('fill Kegiatan JSON column time:');
@@ -181,7 +190,7 @@ async function fillKegiatanJson(graphClient: any, file: DriveFile): Promise<void
 
     try {
       console.log(`update '${file.name}' KegiatanJSON in SharePoint`);
-      await updateSiteColumns(graphClient, file.itemId, { 'KegiatanJSON': kegiatanJsonString });
+      await updateSiteColumns(file.itemId, { 'KegiatanJSON': kegiatanJsonString });
     } catch (error) {
       throw error;
     };
@@ -189,9 +198,9 @@ async function fillKegiatanJson(graphClient: any, file: DriveFile): Promise<void
   };
 };
 
-export async function fillMandatoryColumnContent(graphClient: any, file: DriveFile): Promise<void> {
+export async function fillMandatoryColumnContent(file: DriveFile): Promise<void> {
   console.log('fill empty mandatory column content');
-  await fillTextFormat(graphClient, file);
-  file = await getDriveItem(graphClient, file.id);
-  await fillKegiatanJson(graphClient, file);
+  await fillTextFormat(file);
+  file = await getDriveItem(file.id);
+  await fillKegiatanJson(file);
 };

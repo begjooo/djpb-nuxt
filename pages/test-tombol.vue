@@ -30,16 +30,6 @@ watch(nilai, async(nilaiBaru) => {
   };
 });
 
-// const graphClient = useNuxtApp().$graphClient;
-// console.log(graphClient);
-
-// const { data: pluginsToApi } = await useFetch('/api/test-api', {
-//   method: 'post',
-//   body: {
-//     graphClient: graphClient,
-//   },
-// });
-
 </script>
 
 <template>
@@ -70,6 +60,7 @@ watch(nilai, async(nilaiBaru) => {
   </div>
 
   <div>
+    graphClient from plugins
     {{ pluginsToApi }}
   </div>
 </template>

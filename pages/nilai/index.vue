@@ -23,7 +23,7 @@ async function updateNilai(driveItemId: string) {
     },
   });
   const updatedList = await $fetch(`/api/file-list`);
-  let updatedListRecursive = [];
+  let updatedListRecursive: any = [];
   readFileRecursively(updatedList, updatedListRecursive);
   allFkpknList.value = updatedListRecursive;
 };
@@ -38,7 +38,7 @@ async function hapusNilai(itemId: string, columnName: string){
   });
   console.log(deteleColumnValue);
   const updatedList = await $fetch(`/api/file-list`);
-  let updatedListRecursive = [];
+  let updatedListRecursive: any = [];
   readFileRecursively(updatedList, updatedListRecursive);
   allFkpknList.value = updatedListRecursive;
 };
@@ -104,7 +104,7 @@ async function hapusNilai(itemId: string, columnName: string){
           </td>
           <td>
             <div v-if="file['fields']['Nilai'] === undefined">
-              <i class="text-gray-400">Kosong</i>
+              <i class="text-gray-400">0.0</i>
             </div>
             <div v-else>
               {{ file['fields']['Nilai'] }}

@@ -15,8 +15,14 @@ export default defineNuxtConfig({
     defaultDriveId: process.env.DRIVE_ID,
     defaultListId: process.env.LIST_ID,
     geminiApiKey: process.env.GEMINI_API_KEY,
+    pineconeApiKey: process.env.PINECONE_API_KEY,
   },
   plugins: [
-    '~/plugins/01-init-graph',
+    '~/plugins/01-init-local-dir.server',
   ],
+  nitro: {
+    plugins: [
+      '~/server/init-graph',
+    ],
+  },
 })

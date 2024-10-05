@@ -17,8 +17,7 @@ watch(
       intervalId = setInterval(async () => {
         const update = await $fetch(`/api/drive-item?driveItemId=01KXXEPH7RMST3ILNUGZC3CTMKNAYTPLIT`);
         item.value = update;
-      }, 5000);
-      
+      }, 5000); 
     } else {
       clearInterval(intervalId);
     };

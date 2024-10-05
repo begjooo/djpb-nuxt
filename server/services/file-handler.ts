@@ -5,8 +5,8 @@ import { DriveFile } from "./sites";
 
 export const downloadDirPath = './public/tmp/';
 
-export function readFileRecursively(object: any[], result: any[]): any {
-  for(const item of object){
+export function readFileRecursively(list: any[], result: any[]): any {
+  for(const item of list){
     if(item.type === 'folder' && item.children.length !== 0){
       readFileRecursively(item.children, result);
     } else if(item.type === 'file'){

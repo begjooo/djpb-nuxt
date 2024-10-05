@@ -168,10 +168,6 @@ export const extractKegiatanJsonSchema2 = {
         type: SchemaType.STRING,
         nullable: false,
       },
-      bidang: {
-        type: SchemaType.STRING,
-        nullable: false,
-      },
       waktu: {
         type: SchemaType.STRING,
         nullable: false,
@@ -186,14 +182,14 @@ export const extractKegiatanJsonSchema2 = {
       },
     },
     required: [
-      'kegiatan', 'jenis', 'bidang', 'waktu', 'tempat', 'pihak',
+      'kegiatan', 'jenis', 'waktu', 'tempat', 'pihak',
     ],
   },
 };
 
 export const extractKegiatanJsonPrompt2 = `
 dari dokumen terlampir, identifikasi dan analisis bagian yang secara KHUSUS membahas tentang 'Kegiatan'.
-parse setiap informasi kegiatan seperti 'nama', 'jenis', 'bidang', 'waktu', 'tempat', dan 'pihak/unit yang terlibat' dari dokumen terlampir.
+parse setiap informasi kegiatan seperti 'nama', 'jenis', 'waktu', 'tempat', dan 'pihak/unit yang terlibat' dari dokumen terlampir.
 
 nama kegiatan harus sama persis seperti pada dokumen aslinya.
 pihak/unit yang terlibat harus sama persis seperti pada dokumen aslinya.
@@ -201,17 +197,9 @@ pihak/unit yang terlibat harus sama persis seperti pada dokumen aslinya.
 dalam menentukan jenis kegiatan, lihat berdasarkan 'bab/bagian/sub-bab kegiatan' pada dokumen.
 terdapat tiga 'jenis' kegiatan berdasarkan 'bab/bagian/sub-bab kegiatan', yaitu:
 - Rutin/Periodik -> berikan 'rutin'
-- Strategis/Tematik -> berikan 'strategis'
+- Strategis/Tematik -> berikan 'tematik'
 - Local Expert -> berikan 'expert'
 ada di 'bab/bagian/sub-bab kegiatan' mana kegiatan berada?
-
-untuk memilih 'bidang' kegiatan, pilih salah satu dari 'daftar bidang' di bawah:
-- koordinasi, harmonisasi, dan sinkronisasi
-- asistensi, pendampingan, dan pembinaan
-- sosialisasi dan diseminasi
-- publikasi
-- sharing data dan informasi
-- monitoring dan evaluasi
 
 jika kegiatan memiliki SUB-KEGIATAN, JANGAN MASUKKAN 'induk kegiatan' melainkan MASUKKAN 'sub-sub kegiatan'.
   contoh:
@@ -231,7 +219,6 @@ berikan jawaban dalam format JSON.
   {
     kegiatan: 'Nama Kegiatan',
     jenis: rutin, strategis, atau expert,
-    bidang: pilih satu dari empat opsi 'daftar bidang' kegiatan,
     waktu: '9 September 2024',
     tempat: 'Tempat diselenggarakannya kegiatan',
     pihak: 'pihak A, pihak B, ...',
@@ -239,7 +226,6 @@ berikan jawaban dalam format JSON.
   {
     kegiatan: 'Nama Kegiatan',
     jenis: Rutin/Periodik, Strategis/Tematik, atau Local Expert,
-    bidang: pilih satu dari empat opsi 'daftar bidang' kegiatan,
     waktu: '15 September 2024',
     tempat: 'Tempat diselenggarakannya kegiatan',
     pihak: 'pihak A, pihak B, ...',

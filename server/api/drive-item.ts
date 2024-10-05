@@ -1,13 +1,8 @@
-import { getGraphClient } from "../services/graph-credential";
-import { setMandatorySiteColumns, getDriveItem, fillMandatoryColumnContent } from "../services/sites";
+import { getDriveItem } from "../services/sites";
 
 export default defineEventHandler(async (event) => {
   const { driveItemId } = getQuery(event);
-  const graphClient = await getGraphClient();
-
-  // await setMandatorySiteColumns(graphClient);
-  let file = await getDriveItem(graphClient, driveItemId);
-  // await fillMandatoryColumnContent(graphClient, file);
-  
+  const file = await getDriveItem(driveItemId);
+  console.log('jalan teros');
   return file;
 });
