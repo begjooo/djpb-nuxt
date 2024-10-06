@@ -1,6 +1,14 @@
 <script setup lang="ts">
 
-import { readFileRecursively } from '~/server/services/file-handler';
+function readFileRecursively(list: any[], result: any[]): any {
+    for (const item of list) {
+      if (item.type === "folder" && item.children.length !== 0) {
+        readFileRecursively(item.children, result);
+      } else if (item.type === "file") {
+        result.push(item);
+      }
+    }
+  }
 
 const tabelHeader = [
   'Nama FKPKN',

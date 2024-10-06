@@ -1,6 +1,6 @@
-import { setMandatorySiteColumns } from "../services/sites";
+import { graphHandler } from "../utils/graphHandler";
 
 export default defineEventHandler(async (event) => {
-  await setMandatorySiteColumns();
+  await graphHandler.setMandatorySiteColumns();
   return 'set mandatory column success';
 });

@@ -1,8 +1,8 @@
 import * as fs from "node:fs";
-import { downloadDirPath, downloadFile, isFileDownloaded } from "../services/file-handler";
-import { checkActiveFileInGemini, isFileInGemini, processFileWithGemini, uploadFileToGemini } from "../services/gemini-ai";
-import { nilaiAdministratifPrompt, nilaiAdministratifSchema, promptMap } from "../services/prompt";
-import { DriveFile } from "../services/sites";
+import { fileHandler } from "../utils/file-handler";
+import { checkActiveFileInGemini, isFileInGemini, processFileWithGemini, uploadFileToGemini } from "../utils/gemini-ai";
+import { nilaiAdministratifPrompt, nilaiAdministratifSchema, promptMap } from "../utils/prompt";
+import { DriveFile } from "../utils/graphHandler";
 
 // NOMOR 1
 export function hitungKetepatanWaktu(input: string){
@@ -63,9 +63,9 @@ function hitungFormat(dataFormat: any){
 // ANALSIS PDF UNTUK NOMOR 2-4
 async function analisisPDF(file: DriveFile): Promise<any> {
   if(!(await isFileInGemini(file))){
-    if(!isFileDownloaded(file)){
-      await downloadFile(file.downloadUrl, file.name);
-      file.localPath = downloadDirPath + file.name;
+    if(!fileHandler.isFileDownloaded(file.fileName)){
+      await fileHandler.downloadFile(file.downloadUrl, file.name);
+      file.localPath = fileHandler.downloadDirPath + file.name;
     };
     await uploadFileToGemini(file);
   };

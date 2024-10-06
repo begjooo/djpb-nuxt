@@ -1,8 +1,8 @@
-import { graphClient} from "../init-graph";
+import { graphHandler } from "../utils/graphHandler";
 
 const { defaultSiteId, defaultDriveId, defaultListId } = useRuntimeConfig();
 
 export default defineEventHandler(async (event) => {
-  const driveItems = await graphClient.api(`/sites/${defaultSiteId}`).get();
+  const driveItems = await graphHandler.graphClient!.api(`/sites/${defaultSiteId}`).get();
   return driveItems;
 });

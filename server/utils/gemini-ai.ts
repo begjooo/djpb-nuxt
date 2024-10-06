@@ -1,6 +1,11 @@
+// import {GeminiHandler} from '@ringkasan.net/gemini-handler'
+// const { geminiApiKey } = useRuntimeConfig();
+
+// export const geminiHandler = new GeminiHandler(geminiApiKey)
+
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GoogleAIFileManager } from "@google/generative-ai/server";
-import { DriveFile } from "./sites";
+import { DriveFile } from "./graphHandler";
 
 const { geminiApiKey } = useRuntimeConfig();
 const genAi = new GoogleGenerativeAI(geminiApiKey);

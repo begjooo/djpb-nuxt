@@ -1,6 +1,6 @@
-import { processTextWithGemini } from "../services/gemini-ai";
-import { kegiatanPihakJsonPrompt, kegiatanPihakJsonPrompt2, kegiatanPihakJsonSchema, kegiatanPihakJsonSchema2, promptMap } from "../services/prompt";
-import { DriveFile } from "../services/sites";
+import { processTextWithGemini } from "../utils/gemini-ai";
+import { kegiatanPihakJsonPrompt, kegiatanPihakJsonPrompt2, kegiatanPihakJsonSchema, kegiatanPihakJsonSchema2, promptMap } from "../utils/prompt";
+import { DriveFile } from "../utils/sites";
 
 // FILTER 'PIHAK' MENGGUNAKAN AI UNTUK KEPERLUAN NOMOR 5 DAN 7.b
 async function analisisPihakKegiatan(daftarKegiatanJson: any[]): Promise<any> {

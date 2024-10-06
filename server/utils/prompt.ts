@@ -1,7 +1,5 @@
 import { SchemaType } from "@google/generative-ai";
 
-export const promptMap = new Map();
-
 export const testPrompt = `
 dari dokumen terlampir, sebutkan:
 - Judul Dokumen
@@ -34,7 +32,7 @@ export const extractKegiatanJsonSchema = {
         type: SchemaType.STRING,
         nullable: false,
       },
-      pihak:  {
+      pihak: {
         type: SchemaType.STRING,
         nullable: false,
       },
@@ -56,7 +54,16 @@ export const extractKegiatanJsonSchema = {
       },
     },
     required: [
-      'kegiatan', 'jenis', 'bidang', 'waktu', 'tempat', 'pihak', 'pejabat', 'inovasi', 'forum', 'publikasi',
+      "kegiatan",
+      "jenis",
+      "bidang",
+      "waktu",
+      "tempat",
+      "pihak",
+      "pejabat",
+      "inovasi",
+      "forum",
+      "publikasi",
     ],
   },
 };
@@ -176,14 +183,12 @@ export const extractKegiatanJsonSchema2 = {
         type: SchemaType.STRING,
         nullable: false,
       },
-      pihak:  {
+      pihak: {
         type: SchemaType.STRING,
         nullable: false,
       },
     },
-    required: [
-      'kegiatan', 'jenis', 'waktu', 'tempat', 'pihak',
-    ],
+    required: ["kegiatan", "jenis", "waktu", "tempat", "pihak"],
   },
 };
 
@@ -294,58 +299,58 @@ export const nilaiAdministratifSchema = {
     format: {
       type: SchemaType.OBJECT,
       properties: {
-        'Kata Pengantar': {
+        "Kata Pengantar": {
           type: SchemaType.BOOLEAN,
           nullable: false,
         },
-        'Executive Summary': {
+        "Executive Summary": {
           type: SchemaType.BOOLEAN,
           nullable: false,
         },
-        'Daftar Isi': {
+        "Daftar Isi": {
           type: SchemaType.BOOLEAN,
           nullable: false,
         },
-        'Latar Belakang': {
+        "Latar Belakang": {
           type: SchemaType.BOOLEAN,
           nullable: false,
         },
-        'Identifikasi Masalah': {
+        "Identifikasi Masalah": {
           type: SchemaType.BOOLEAN,
           nullable: false,
         },
-        'Kegiatan Rutin': {
+        "Kegiatan Rutin": {
           type: SchemaType.BOOLEAN,
           nullable: false,
         },
-        'Kegiatan Strategis': {
+        "Kegiatan Strategis": {
           type: SchemaType.BOOLEAN,
           nullable: false,
         },
-        'Kegiatan Expert': {
+        "Kegiatan Expert": {
           type: SchemaType.BOOLEAN,
           nullable: false,
         },
-        'Kesimpulan': {
+        Kesimpulan: {
           type: SchemaType.BOOLEAN,
           nullable: false,
         },
-        'Rekomendasi': {
+        Rekomendasi: {
           type: SchemaType.BOOLEAN,
           nullable: false,
         },
       },
       required: [
-        'Kata Pengantar',
-        'Executive Summary',
-        'Daftar Isi',
-        'Latar Belakang',
-        'Identifikasi Masalah',
-        'Kegiatan Rutin',
-        'Kegiatan Strategis',
-        'Kegiatan Expert',
-        'Kesimpulan',
-        'Rekomendasi',
+        "Kata Pengantar",
+        "Executive Summary",
+        "Daftar Isi",
+        "Latar Belakang",
+        "Identifikasi Masalah",
+        "Kegiatan Rutin",
+        "Kegiatan Strategis",
+        "Kegiatan Expert",
+        "Kesimpulan",
+        "Rekomendasi",
       ],
     },
     desain: {
@@ -360,7 +365,7 @@ export const nilaiAdministratifSchema = {
           nullable: false,
         },
       },
-      required: ['nilai', 'alasan'],
+      required: ["nilai", "alasan"],
     },
     penulisan: {
       type: SchemaType.OBJECT,
@@ -374,10 +379,10 @@ export const nilaiAdministratifSchema = {
           nullable: false,
         },
       },
-      required: ['nilai', 'alasan'],
+      required: ["nilai", "alasan"],
     },
   },
-  required: ['format', 'desain', 'penulisan'],
+  required: ["format", "desain", "penulisan"],
 };
 
 export const nilaiAdministratifPrompt = `
@@ -468,14 +473,12 @@ export const kegiatanPihakJsonSchema = {
         type: SchemaType.BOOLEAN,
         nullable: false,
       },
-      lainnya:  {
+      lainnya: {
         type: SchemaType.BOOLEAN,
         nullable: false,
       },
     },
-    required: [
-      'kegiatan', 'pihak', 'alasan', 'djpb', 'pemda', 'lainnya',
-    ],
+    required: ["kegiatan", "pihak", "alasan", "djpb", "pemda", "lainnya"],
   },
 };
 
@@ -544,14 +547,12 @@ export const kegiatanPihakJsonSchema2 = {
         type: SchemaType.BOOLEAN,
         nullable: false,
       },
-      lainnya:  {
+      lainnya: {
         type: SchemaType.BOOLEAN,
         nullable: false,
       },
     },
-    required: [
-      'kegiatan', 'pihak', 'djpb', 'pemda', 'lainnya',
-    ],
+    required: ["kegiatan", "pihak", "djpb", "pemda", "lainnya"],
   },
 };
 
@@ -596,3 +597,9 @@ berikan jawaban dalam format JSON di bawah.
 ]
 
 `;
+
+export const promptMap = new Map();
+promptMap.set("KegiatanJSON", {
+  prompt: extractKegiatanJsonPrompt2,
+  schema: extractKegiatanJsonSchema2,
+});

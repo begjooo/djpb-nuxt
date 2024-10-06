@@ -1,8 +1,8 @@
-import { updateSiteColumns } from "../services/sites";
+import { graphHandler } from "../utils/graphHandler";
 
 export default defineEventHandler(async (event) => {
   const { itemId, columnName } = await readBody(event);
-  await updateSiteColumns(itemId, {
+  await graphHandler.updateSiteColumns(itemId, {
     [columnName]: null,
   });
   console.log(`delete ${columnName} column value done`)

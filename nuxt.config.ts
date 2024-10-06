@@ -22,7 +22,6 @@ export default defineNuxtConfig({
   ],
   nitro: {
     plugins: [
-      '~/server/init-graph',
     ],
   },
 })
