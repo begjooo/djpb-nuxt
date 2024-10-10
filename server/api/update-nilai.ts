@@ -1,17 +1,18 @@
-import { hitungKetepatanWaktu, hitungNilaiAdministratif } from "../penilaian/administratif";
-import { hitungNilaiSubstantif } from "../penilaian/subtantif";
-
+import { hitungKetepatanWaktu, hitungNilaiAdministratif } from "../utils/nilai/administratif";
+import { hitungNilaiSubstantif } from "../utils/nilai/substantif";
 
 export default defineEventHandler(async (event) => {
   const { driveItemId } = await readBody(event);
+  console.log(`[/api/update-nilai] driveItemId: ${driveItemId}`);
 
-  await graphHandler.setMandatorySiteColumns();
+  await graphHandler.checkMandatorySiteColumns();
   let file = await graphHandler.getDriveItem(driveItemId);
-  
-  await graphHandler.fillMandatoryColumnContent(file);
+
+  await graphHandler.checkMandatoryColumnsValue(file);
   file = await graphHandler.getDriveItem(driveItemId);
 
-  console.log(`\nmenghitung nilai administratif laporan FKPKN`);
+  
+  console.log(`\nmenghitung nilai administratif ${file.name}`);
   const nilaiKetepatanWaktu = hitungKetepatanWaktu(file.fields['KetepatanWaktu']);
   console.log(`nilai ketepatan waktu pengumpulan (8%) = ${nilaiKetepatanWaktu}`);
 
@@ -21,19 +22,19 @@ export default defineEventHandler(async (event) => {
     'NilaiAdministratif': nilaiAdministratif,
   });
 
-  console.log(`\nmenghitung nilai substantif laporan FKPKN`);
+  console.log(`\nmenghitung nilai substantif ${file.name}`);
   const nilaiSubstantif = await hitungNilaiSubstantif(file);
   console.log(`nilai substantif (60%) = ${nilaiSubstantif}`);
   await graphHandler.updateSiteColumns(file.itemId, {
     'NilaiSubstantif': nilaiSubstantif,
   });
 
-  console.log(`\nmenghitung nilai total laporan FKPKN`);
+  console.log(`\nmenghitung nilai total ${file.name}`);
   const nilai = nilaiKetepatanWaktu + nilaiAdministratif + nilaiSubstantif;
   console.log(`nilai = ${nilai}`);
   await graphHandler.updateSiteColumns(file.itemId, {
     'Nilai': nilai,
   });
-  
-  return file;
+
+  console.log(`\nmenghitung ${file.name}: done`);
 });

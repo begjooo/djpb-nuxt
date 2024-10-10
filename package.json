@@ -11,14 +11,13 @@
   },
   "dependencies": {
     "@azure/identity": "^4.4.1",
-    "@google/generative-ai": "^0.20.0",
+    "@google/generative-ai": "^0.21.0",
     "@microsoft/microsoft-graph-client": "^3.0.7",
-    "@nuxt/ui": "^2.18.6",
+    "@nuxtjs/mdc": "^0.9.0",
     "@nuxtjs/tailwindcss": "^6.12.1",
-    "@ringkasan.net/parse-pdf-url": "^0.1.10",
+    "@ringkasan.net/parse-pdf-url": "^0.1.13",
     "fs": "^0.0.1-security",
     "https": "^1.0.0",
-    "jwt-decode": "^4.0.0",
     "nuxt": "^3.13.0",
     "vue": "latest",
     "vue-router": "latest"
