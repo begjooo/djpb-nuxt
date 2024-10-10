@@ -1,4 +1,4 @@
-import { hitungKetepatanWaktu, hitungNilaiAdministratif } from "../utils/nilai/administratif";
+import { hitungKetepatanWaktu, hitungNilaiAdministratif, hitungPengumpulan } from "../utils/nilai/administratif";
 import { hitungNilaiSubstantif } from "../utils/nilai/substantif";
 
 export default defineEventHandler(async (event) => {
@@ -11,9 +11,9 @@ export default defineEventHandler(async (event) => {
   await graphHandler.checkMandatoryColumnsValue(file);
   file = await graphHandler.getDriveItem(driveItemId);
 
-  
   console.log(`\nmenghitung nilai administratif ${file.name}`);
-  const nilaiKetepatanWaktu = hitungKetepatanWaktu(file.fields['KetepatanWaktu']);
+  // const nilaiKetepatanWaktu = hitungKetepatanWaktu(file.fields['KetepatanWaktu']);
+  const nilaiKetepatanWaktu = hitungPengumpulan(file.fields['Triwulan'], file.fields['TanggalPengumpulan']);
   console.log(`nilai ketepatan waktu pengumpulan (8%) = ${nilaiKetepatanWaktu}`);
 
   const nilaiAdministratif = await hitungNilaiAdministratif(file);

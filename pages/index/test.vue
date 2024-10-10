@@ -48,6 +48,35 @@ async function submitTanggal(){
 const driveId = '01KXXEPH7RMST3ILNUGZC3CTMKNAYTPLIT';
 const driveItem = await useDriveItem(driveId);
 
+const triwulanOptions = [
+  [
+    {
+      label: 'Triwulan I',
+      click: () => {
+        console.log('Triwulan I');
+      },
+    },
+    {
+      label: 'Triwulan II',
+      click: () => {
+        console.log('Triwulan II');
+      },
+    },
+    {
+      label: 'Triwulan III',
+      click: () => {
+        console.log('Triwulan III');
+      },
+    },
+    {
+      label: 'Triwulan IV',
+      click: () => {
+        console.log('Triwulan IV');
+      },
+    },
+  ],
+];
+
 </script>
 
 <template>
@@ -139,7 +168,13 @@ const driveItem = await useDriveItem(driveId);
     <br>
 
     <div>
-      {{ driveItem }}
+      {{ driveItem.name }}
+    </div>
+
+    <div>
+      <UDropdown :items="triwulanOptions" :popper="{ placement: 'bottom-start' }">
+        <UButton color="blue" trailing-icon="i-heroicons-chevron-down-20-solid" size="2xs"/>
+      </UDropdown>
     </div>
 
   </div>

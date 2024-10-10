@@ -598,8 +598,8 @@ berikan jawaban dalam format JSON di bawah.
 
 `;
 
-export const promptMap = new Map();
-promptMap.set("KegiatanJSON", {
-  prompt: extractKegiatanJsonPrompt2,
-  schema: extractKegiatanJsonSchema2,
-});
+// export const promptMap = new Map();
+// promptMap.set("KegiatanJSON", {
+//   prompt: extractKegiatanJsonPrompt2,
+//   schema: extractKegiatanJsonSchema2,
+// });

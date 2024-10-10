@@ -6,6 +6,14 @@ const inputTanggal = ref('');
 
 fkpknListRef.value = fkpknList;
 
+async function updateTanggal(driveItemId: string, triwulan: string, tanggal: date){
+  console.log(`update nilai: ${driveItemId}`);
+  console.log(`triwulan: ${triwulan}`);
+  console.log(`tanggal input: ${tanggal}`);
+  // await useUpdateSiteColumn(driveItemId);
+  // fkpknListRef.value = await useFkpknList();
+};
+
 async function updateNilai(driveItemId: string, tanggal: string){
   console.log(`update nilai: ${driveItemId}`);
   console.log(`tanggal input: ${tanggal}`);
@@ -21,20 +29,58 @@ async function hapusNilai(itemId: string, columnName: string){
 
 const tableHeader = [
   'Nama FKPKN',
-  'Waktu Pengumpulan (Poin 1)',
+  // 'Waktu Pengumpulan (Poin 1)',
+  'Triwulan',
+  'Tanggal Pengumpulan',
+  // '',
   'Nilai Administratif (Poin 2-4)',
   'Nilai Substantif (Poin 5-8)',
   'Nilai Akhir'
 ];
 
+const triwulanOptions = [
+  [
+    {
+      label: 'Triwulan I',
+      click: () => {
+        console.log('Triwulan I');
+      },
+    },
+    {
+      label: 'Triwulan II',
+      click: () => {
+        console.log('Triwulan II');
+      },
+    },
+    {
+      label: 'Triwulan III',
+      click: () => {
+        console.log('Triwulan III');
+      },
+    },
+    {
+      label: 'Triwulan IV',
+      click: () => {
+        console.log('Triwulan IV');
+      },
+    },
+  ],
+];
+
 </script>
 
 <template>
-  <div class="py-2 text-sm">
+  <div class="p-2 text-sm">
     <table class="table-fixed w-full">
       <thead>
-        <tr>
-          <th v-for="header in tableHeader" class="text-blue-900">{{ header }}</th>
+        <tr class="text-right">
+          <!-- <th v-for="header in tableHeader" class="text-blue-900">{{ header }}</th> -->
+          <th class="text-blue-900">Laporan</th>
+          <th class="text-blue-900 w-1/12">Triwulan</th>
+          <th class="text-blue-900 w-2/12">Tanggal Pengumpulan</th>
+          <th class="text-blue-900 w-2/12">Nilai Administratif (32%)</th>
+          <th class="text-blue-900 w-2/12">Nilai Substantif (40%)</th>
+          <th class="text-blue-900 w-2/12 pr-10">Nilai Akhir</th>
         </tr>
       </thead>
 
@@ -49,17 +95,42 @@ const tableHeader = [
             </button>
           </td>
           
-          <td class="text-right">
+          <!-- <td class="text-right">
             <div v-if="file['fields']['KetepatanWaktu'] === undefined">
               <input class="text-right text-gray-400" type="date" v-model="file['fields']['KetepatanWaktu']" />
-              <!-- <i class="text-gray-400">Kosong</i> -->
+              <i class="text-gray-400">Kosong</i>
             </div>
             <div v-else>
               {{ file['fields']['KetepatanWaktu'] }} Kerja setelah TW sebelumnya
             </div>
+          </td> -->
+          
+          <td class="text-right">
+            <div v-if="file['fields']['Triwulan'] === undefined">
+              <!-- <input class="text-right text-gray-400" type="date" v-model="file['fields']['Triwulan']" /> -->
+              <div class="text-gray-400 italic">
+                Kosong
+                <UDropdown :items="triwulanOptions" :popper="{ placement: 'bottom-start' }">
+                  <UButton color="blue" trailing-icon="i-heroicons-chevron-down-20-solid" size="2xs" />
+                </UDropdown>
+              </div>
+            </div>
+            <div v-else>
+              {{ file['fields']['Triwulan'] }}
+            </div>
           </td>
           
-          <td class="text-right pr-12">
+          <td class="text-right">
+            <div v-if="file['fields']['TanggalPengumpulan'] === undefined">
+              <!-- <input class="text-right text-gray-400" type="date" v-model="file['fields']['KetepatanWaktu']" /> -->
+              <i class="text-gray-400">Kosong</i>
+            </div>
+            <div v-else>
+              {{ new Date(file['fields']['TanggalPengumpulan']).toISOString().split('T')[0] }}
+            </div>
+          </td>
+          
+          <td class="text-right">
             <div v-if="file['fields']['NilaiAdministratif'] === undefined">
               <i class="text-gray-400">Kosong</i>
             </div>
@@ -74,7 +145,7 @@ const tableHeader = [
             </div>
           </td>
 
-          <td class="text-right pr-12">
+          <td class="text-right">
             <div v-if="file['fields']['NilaiSubstantif'] === undefined">
               <i class="text-gray-400">Kosong</i>
             </div>
@@ -89,7 +160,7 @@ const tableHeader = [
             </div>
           </td>
 
-          <td class="text-right pr-12">
+          <td class="text-right pr-10">
             <div v-if="file['fields']['Nilai'] === undefined">
               <i class="text-gray-400">0.0</i>
             </div>

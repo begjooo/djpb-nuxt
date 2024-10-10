@@ -13,6 +13,7 @@
     "@azure/identity": "^4.4.1",
     "@google/generative-ai": "^0.21.0",
     "@microsoft/microsoft-graph-client": "^3.0.7",
+    "@nuxt/ui": "^2.18.7",
     "@nuxtjs/mdc": "^0.9.0",
     "@nuxtjs/tailwindcss": "^6.12.1",
     "@ringkasan.net/parse-pdf-url": "^0.1.13",
