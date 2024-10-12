@@ -5,7 +5,7 @@ const fkpknListRef = ref({
   name: 'Folder Utama',
   children: fkpknList,
 });
-const currentFolderId = useState('selected-folder-id');
+const currentFolderId: any = useState('selected-folder-id');
 const currentFolderName = useState('selected-folder-name');
 const fkpknListState = useState('files-in-folder');
 const inputTanggal = ref('');
@@ -45,7 +45,7 @@ const tableHeader = [
   'Nilai Akhir'
 ];
 
-const triwulanOptions = (id) => [
+const triwulanOptions = (id: string) => [
   [
     {
       label: 'Triwulan I',

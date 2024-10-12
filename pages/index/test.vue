@@ -46,7 +46,7 @@ async function submitTanggal(){
 };
 
 const driveId = '01KXXEPH7RMST3ILNUGZC3CTMKNAYTPLIT';
-const driveItem = await useDriveItem(driveId);
+const driveItem: any = await useDriveItem(driveId);
 
 const triwulanOptions = [
   [

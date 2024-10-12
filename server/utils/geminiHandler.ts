@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GoogleAIFileManager } from "@google/generative-ai/server";
-import { DriveFile } from "./graphHandler";
+import { type DriveFile } from "./graphHandler";
 
 const { geminiApiKey } = useRuntimeConfig();
 

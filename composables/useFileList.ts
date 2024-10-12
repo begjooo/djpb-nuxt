@@ -3,7 +3,7 @@
 export default async function(driveItemId: string){
   const folderId = useState('selected-folder-id', () => '');
   const files = useState('files-in-folder', () => []);
-  const data = await $fetch(`/api/files`, {
+  const data: any = await $fetch(`/api/files`, {
     method: 'post',
     body: {
       driveItemId: driveItemId,

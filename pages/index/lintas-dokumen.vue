@@ -10,7 +10,7 @@ const fkpknListRef = ref({
   children: fkpknList,
 });
 
-const checkedFile = useState('selected-files-for-lintas-dok');
+const checkedFile: any = useState('selected-files-for-lintas-dok');
 const inputQuery = ref('');
 const responseAi = ref('');
 let renderedResponseAi = '';
@@ -30,7 +30,7 @@ async function submitQuery(){
   <div class="flex">
 
     <div class="w-1/5 h-screen p-2 text-sm">
-      <div>
+      <div v-if="fkpknListRef">
         <ul>
           <TreeItemCheck :item="fkpknListRef" />
         </ul>

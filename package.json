@@ -22,5 +22,8 @@
     "nuxt": "^3.13.0",
     "vue": "latest",
     "vue-router": "latest"
+  },
+  "devDependencies": {
+    "@iconify-json/mdi": "^1.2.1"
   }
 }
