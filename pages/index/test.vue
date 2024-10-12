@@ -77,6 +77,12 @@ const triwulanOptions = [
   ],
 ];
 
+const fkpknList = await useMapFilesAndFolder();
+const fkpknListRef = ref({
+  name: 'Daftar FKPKN',
+  children: fkpknList,
+});
+
 </script>
 
 <template>
@@ -177,5 +183,10 @@ const triwulanOptions = [
       </UDropdown>
     </div>
 
+    <div>
+      <ul>
+        <TreeItem :model="fkpknListRef" />
+      </ul>
+    </div>
   </div>
 </template>

@@ -1,6 +1,4 @@
-import { graphHandler } from "../utils/graphHandler";
-
 export default defineEventHandler(async (event) => {
-  await graphHandler.setMandatorySiteColumns();
+  await graphHandler.checkMandatorySiteColumns();
   return 'set mandatory column success';
 });

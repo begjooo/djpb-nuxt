@@ -2,46 +2,55 @@
 
 import { parseMarkdown } from '@nuxtjs/mdc/runtime'
 
-const fkpknList = await useFkpknList();
-const checkedFile = ref([]);
+// const fkpknList = await useFkpknList();
 
+const fkpknList = await useMapFilesAndFolder();
+const fkpknListRef = ref({
+  name: 'Folder Utama',
+  children: fkpknList,
+});
+
+const checkedFile = useState('selected-files-for-lintas-dok');
 const inputQuery = ref('');
 const responseAi = ref('');
 let renderedResponseAi = '';
 
 async function submitQuery(){
   if(checkedFile.value.length !== 0){
+    console.log(checkedFile.value);
     responseAi.value = await useAskAi(inputQuery.value, checkedFile.value);
     renderedResponseAi = responseAi.value;
     // inputQuery.value = '';
   };
 };
 
-
 </script>
 
 <template>
   <div class="flex">
+
     <div class="w-1/5 h-screen p-2 text-sm">
       <div>
-        <ul v-for="item in fkpknList">
-          <li class="py-1">
-            <input type="checkbox" :id="item.id" :value="item.id" v-model="checkedFile" />
-            {{ item.name }}
-          </li>
+        <ul>
+          <TreeItemCheck :item="fkpknListRef" />
         </ul>
       </div>
+
     </div>
 
     <div class="border w-4/5 p-2 place-content-stretch">
       <div>
-        <form @submit.prevent="submitQuery" class="">
-          <textarea
-            class="border p-2 resize rounded-md md:w-auto max-w"
-            v-model="inputQuery"
-            placeholder="Kebutuhan anda"></textarea>
-          <div><button class="text-blue-800 hover:bg-blue-200 rounded px-4 py-1 hover:font-bold">Tanya AI</button></div>
-        </form>
+        <textarea
+          class="border p-2 resize rounded-md md:w-auto max-w"
+          v-model="inputQuery"
+          placeholder="Kebutuhan anda"></textarea>
+        <div>
+          <UButton color="white"
+            trailing-icon="i-mdi:chat-processing"
+            class="text-blue-800 hover:bg-blue-200 rounded hover:font-bold rounded"
+            label="Tanya AI"
+            @click="submitQuery" />
+        </div>
       </div>
 
       <div class="py-2">
@@ -61,6 +70,7 @@ async function submitQuery(){
         <li>{{ item }}</li>
       </ul>
     </div> -->
+    
   </div>
 
 

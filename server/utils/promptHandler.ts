@@ -1,14 +1,372 @@
 import { SchemaType } from "@google/generative-ai";
 
+const kegiatanJsonSchema = {
+  type: SchemaType.ARRAY,
+  items: {
+    type: SchemaType.OBJECT,
+    properties: {
+      kegiatan: {
+        type: SchemaType.STRING,
+        nullable: false,
+      },
+      jenis: {
+        type: SchemaType.STRING,
+        nullable: false,
+      },
+      bidang: {
+        type: SchemaType.STRING,
+        nullable: false,
+      },
+      waktu: {
+        type: SchemaType.STRING,
+        nullable: false,
+      },
+      tempat: {
+        type: SchemaType.STRING,
+        nullable: false,
+      },
+      pihak: {
+        type: SchemaType.STRING,
+        nullable: false,
+      },
+      pejabat: {
+        type: SchemaType.STRING,
+        nullable: false,
+      },
+      inovasi: {
+        type: SchemaType.STRING,
+        nullable: true,
+      },
+      forum: {
+        type: SchemaType.STRING,
+        nullable: true,
+      },
+      publikasi: {
+        type: SchemaType.BOOLEAN,
+        nullable: false,
+      },
+    },
+    required: [
+      "kegiatan",
+      "jenis",
+      "bidang",
+      "waktu",
+      "tempat",
+      "pihak",
+      "pejabat",
+      "inovasi",
+      "forum",
+      "publikasi",
+    ],
+  },
+};
+
 const kegiatanJsonPrompt = `
+dari dokumen terlampir, identifikasi dan analisis bagian yang secara KHUSUS membahas tentang 'Kegiatan'.
+parse setiap informasi kegiatan seperti 'nama', 'jenis', 'bidang', 'waktu', 'tempat', 'pihak/unit yang terlibat', 'pejabat yang terlibat', 'inovasi', 'forum', dan 'publikasi' dari dokumen terlampir.
+
+nama kegiatan harus sama persis seperti pada dokumen aslinya.
+pihak/unit yang terlibat harus sama persis seperti pada dokumen aslinya.
+
+dalam menentukan jenis kegiatan, lihat berdasarkan 'bab/bagian/sub-bab kegiatan' pada dokumen.
+terdapat tiga 'jenis' kegiatan berdasarkan 'bab/bagian/sub-bab kegiatan', yaitu:
+- Rutin/Periodik -> berikan 'rutin'
+- Strategis/Tematik -> berikan 'strategis'
+- Local Expert -> berikan 'expert'
+ada di 'bab/bagian/sub-bab kegiatan' mana kegiatan berada?
+
+untuk memilih 'bidang' kegiatan, pilih salah satu dari 'daftar bidang' di bawah:
+- koordinasi, harmonisasi, dan sinkronisasi
+- asistensi, pendampingan, dan pembinaan
+- sosialisasi dan diseminasi
+- publikasi
+- sharing data dan informasi
+- monitoring dan evaluasi
+
+'pejabat yang terlibat' mempertimbangkan:
+- golongan 'pejabat':
+  - Pimpinan Daerah
+    - Gubernur
+    - Walikota
+    - Bupati
+    - Wakil Gubernur (Wagub)
+    - Wakil Walikota (Wawali)
+    - Wakil Bupati (Wabup)
+  - Kepala Dinas
+  - Kepala BPKAD
+- adakah pejabat dalam kegiatan?
+  - jika ada, apa golongan 'pejabatnya'?
+  - jika tidak ada, berikan 'Lainnya'
+
+apakah kegiatan membahas tentang suatu 'inovasi'?
+- berikut daftar 'inovasi':
+  - ketahanan pangan
+  - stunting
+  - local tax power
+  - pengendalian inflasi
+- jika TIDAK ADA, berikan null.
+
+apakah kegiatan berupa FORUM atau TIM pada suatu DAERAH? sebutkan alasannya!
+- jika TIDAK ADA, berikan null.
+
+apakah terdapat 'publikasi' pada kegiatan tersebut?
+- berikan true jika ADA, berikan false jika TIDAK ADA.
+
+jika kegiatan memiliki SUB-KEGIATAN, JANGAN MASUKKAN 'induk kegiatan' melainkan MASUKKAN 'sub-sub kegiatan'.
+contoh:
+- Koordinasi dalam Penyusunan Tematik ALCo Regional -> induk
+  - Dinas Pertanian Provinsi Sumut -> sub
+    ...
+  - Balai Besar Meteorologi Klimatologi dan Geofisika Wilayah I -> sub
+    ...
+
+maka nama kegiatannya menjadi:
+- Koordinasi dalam Penyusunan Tematik ALCo Regional - Dinas Pertanian Provinsi Sumut
+- Koordinasi dalam Penyusunan Tematik ALCo Regional - Balai Besar Meteorologi Klimatologi dan Geofisika Wilayah I
+
+berikan jawaban dalam format JSON.
+
+[
+  {
+    kegiatan: 'Nama Kegiatan',
+    jenis: rutin, strategis, atau expert,
+    bidang: pilih satu dari empat opsi 'daftar bidang' kegiatan,
+    waktu: '9 September 2024',
+    tempat: 'Tempat diselenggarakannya kegiatan',
+    pihak: 'pihak A, pihak B, ...',
+    pejabat: 'Gubernur, Walikota, Bupati, Wagub, Wawali, Wabup, atau Lainnya',
+    inovasi: 'ketahanan pangan, stunting',
+    forum: 'Ya, karena ...',
+    publikasi: true atau false,
+  },
+  {
+    kegiatan: 'Nama Kegiatan',
+    jenis: Rutin/Periodik, Strategis/Tematik, atau Local Expert,
+    bidang: pilih satu dari empat opsi 'daftar bidang' kegiatan,
+    waktu: '15 September 2024',
+    tempat: 'Tempat diselenggarakannya kegiatan',
+    pihak: 'pihak A, pihak B, ...',
+    pejabat: 'Gubernur, Walikota, Bupati, Wagub, Wawali, Wabup, atau Lainnya',
+    inovasi: 'pengendalian inflasi',
+    forum: 'Tidak, karena ...',
+    publikasi: true atau false,
+  },
+  ...
+]
 
 `;
 
-const kegiatanJsonSchema = {
-
+const kegiatanJsonSchema2 = {
+  type: SchemaType.ARRAY,
+  items: {
+    type: SchemaType.OBJECT,
+    properties: {
+      kegiatan: {
+        type: SchemaType.STRING,
+        nullable: false,
+      },
+      jenis: {
+        type: SchemaType.STRING,
+        nullable: false,
+      },
+      bidang: {
+        type: SchemaType.STRING,
+        nullable: false,
+      },
+      waktu: {
+        type: SchemaType.STRING,
+        nullable: false,
+      },
+      tempat: {
+        type: SchemaType.STRING,
+        nullable: false,
+      },
+      pihak: {
+        type: SchemaType.STRING,
+        nullable: false,
+      },
+      pejabat: {
+        type: SchemaType.STRING,
+        nullable: false,
+      },
+      inovasi: {
+        type: SchemaType.STRING,
+        nullable: true,
+      },
+      forum: {
+        type: SchemaType.STRING,
+        nullable: true,
+      },
+      publikasi: {
+        type: SchemaType.BOOLEAN,
+        nullable: false,
+      },
+    },
+    required: [
+      "kegiatan",
+      "jenis",
+      "bidang",
+      "waktu",
+      "tempat",
+      "pihak",
+      "pejabat",
+      "inovasi",
+      "forum",
+      "publikasi",
+    ],
+  },
 };
 
-export const nilaiAdministratifSchema = {
+const kegiatanJsonPrompt2 = `
+dari dokumen terlampir, identifikasi dan analisis bagian yang secara KHUSUS membahas tentang 'Kegiatan'.
+parse setiap informasi kegiatan seperti 'nama', 'jenis', 'bidang', 'waktu', 'tempat', 'pihak/unit yang terlibat', 'pejabat yang terlibat', 'inovasi', 'forum', dan 'publikasi' dari dokumen terlampir.
+
+nama kegiatan harus sama persis seperti pada dokumen aslinya.
+pihak/unit yang terlibat harus sama persis seperti pada dokumen aslinya.
+
+dalam menentukan jenis kegiatan, lihat berdasarkan 'bab/bagian/sub-bab kegiatan' pada dokumen.
+terdapat tiga 'jenis' kegiatan berdasarkan 'bab/bagian/sub-bab kegiatan', yaitu:
+- Rutin/Periodik -> berikan 'rutin'
+- Strategis/Tematik -> berikan 'strategis'
+- Local Expert -> berikan 'expert'
+ada di 'bab/bagian/sub-bab kegiatan' mana kegiatan berada?
+
+untuk memilih 'bidang' kegiatan, pilih salah satu dari 'daftar bidang' di bawah:
+- koordinasi, harmonisasi, dan sinkronisasi
+- asistensi, pendampingan, dan pembinaan
+- sosialisasi dan diseminasi
+- publikasi
+- sharing data dan informasi
+- monitoring dan evaluasi
+
+'pejabat yang terlibat' mempertimbangkan:
+- golongan 'pejabat':
+  - Pimpinan Daerah
+    - Gubernur
+    - Walikota
+    - Bupati
+    - Wakil Gubernur (Wagub)
+    - Wakil Walikota (Wawali)
+    - Wakil Bupati (Wabup)
+  - Kepala Dinas
+  - Kepala BPKAD
+- adakah pejabat dalam kegiatan?
+  - jika ada, apa golongan 'pejabatnya'?
+  - jika tidak ada, berikan 'Lainnya'
+
+apakah kegiatan membahas tentang suatu 'inovasi'?
+- berikut daftar 'inovasi':
+  - ketahanan pangan
+  - stunting
+  - local tax power
+  - pengendalian inflasi
+- jika TIDAK ADA, berikan null.
+
+apakah kegiatan berupa FORUM atau TIM pada suatu DAERAH? sebutkan alasannya!
+- jika TIDAK ADA, berikan null.
+
+apakah terdapat 'publikasi' pada kegiatan tersebut?
+- berikan true jika ADA, berikan false jika TIDAK ADA.
+
+jika kegiatan memiliki SUB-KEGIATAN, JANGAN MASUKKAN 'induk kegiatan' melainkan MASUKKAN 'sub-sub kegiatan'.
+contoh:
+- Koordinasi dalam Penyusunan Tematik ALCo Regional -> induk
+  - Dinas Pertanian Provinsi Sumut -> sub
+    ...
+  - Balai Besar Meteorologi Klimatologi dan Geofisika Wilayah I -> sub
+    ...
+
+maka nama kegiatannya menjadi:
+- Koordinasi dalam Penyusunan Tematik ALCo Regional - Dinas Pertanian Provinsi Sumut
+- Koordinasi dalam Penyusunan Tematik ALCo Regional - Balai Besar Meteorologi Klimatologi dan Geofisika Wilayah I
+
+berikan jawaban dalam format JSON.
+
+[
+  {
+    kegiatan: 'Nama Kegiatan',
+    jenis: rutin, strategis, atau expert,
+    bidang: pilih satu dari empat opsi 'daftar bidang' kegiatan,
+    waktu: '9 September 2024',
+    tempat: 'Tempat diselenggarakannya kegiatan',
+    pihak: 'pihak A, pihak B, ...',
+    pejabat: 'Gubernur, Walikota, Bupati, Wagub, Wawali, Wabup, atau Lainnya',
+    inovasi: 'ketahanan pangan, stunting',
+    forum: 'Ya, karena ...',
+    publikasi: true atau false,
+  },
+  {
+    kegiatan: 'Nama Kegiatan',
+    jenis: Rutin/Periodik, Strategis/Tematik, atau Local Expert,
+    bidang: pilih satu dari empat opsi 'daftar bidang' kegiatan,
+    waktu: '15 September 2024',
+    tempat: 'Tempat diselenggarakannya kegiatan',
+    pihak: 'pihak A, pihak B, ...',
+    pejabat: 'Gubernur, Walikota, Bupati, Wagub, Wawali, Wabup, atau Lainnya',
+    inovasi: 'pengendalian inflasi',
+    forum: 'Tidak, karena ...',
+    publikasi: true atau false,
+  },
+  ...
+]
+
+`;
+
+const kegiatanPrompt = `
+dari dokumen terlampir, identifikasi dan analisis bagian yang secara KHUSUS membahas tentang 'Kegiatan'.
+parse setiap informasi kegiatan seperti 'nama', 'jenis', 'bidang', 'waktu', 'tempat', dan 'pihak/unit yang terlibat' dari dokumen terlampir.
+
+nama kegiatan harus sama persis seperti pada dokumen aslinya.
+pihak/unit yang terlibat harus sama persis seperti pada dokumen aslinya.
+
+dalam menentukan jenis kegiatan, lihat berdasarkan 'bab/bagian/sub-bab kegiatan' pada dokumen.
+terdapat tiga 'jenis' kegiatan berdasarkan 'bab/bagian/sub-bab kegiatan', yaitu:
+- Rutin/Periodik -> berikan 'rutin'
+- Strategis/Tematik -> berikan 'strategis'
+- Local Expert -> berikan 'expert'
+ada di 'bab/bagian/sub-bab kegiatan' mana kegiatan berada?
+
+untuk memilih 'bidang' kegiatan, pilih salah satu dari 'daftar bidang' di bawah:
+- koordinasi, harmonisasi, dan sinkronisasi
+- asistensi, pendampingan, dan pembinaan
+- sosialisasi dan diseminasi
+- publikasi
+- sharing data dan informasi
+- monitoring dan evaluasi
+
+jika kegiatan memiliki SUB-KEGIATAN, JANGAN MASUKKAN 'induk kegiatan' melainkan MASUKKAN 'sub-sub kegiatan'.
+  contoh:
+  - Koordinasi dalam Penyusunan Tematik ALCo Regional -> induk
+    - Dinas Pertanian Provinsi Sumut -> sub
+      ...
+    - Balai Besar Meteorologi Klimatologi dan Geofisika Wilayah I -> sub
+      ...
+
+  maka nama kegiatannya menjadi:
+  - Koordinasi dalam Penyusunan Tematik ALCo Regional - Dinas Pertanian Provinsi Sumut
+  - Koordinasi dalam Penyusunan Tematik ALCo Regional - Balai Besar Meteorologi Klimatologi dan Geofisika Wilayah I
+
+berikan jawaban dalam format di bawah.
+
+  kegiatan: 'Nama Kegiatan',
+  jenis: rutin, strategis, atau expert,
+  bidang: pilih satu dari empat opsi 'daftar bidang' kegiatan,
+  waktu: '9 September 2024',
+  tempat: 'Tempat diselenggarakannya kegiatan',
+  pihak: 'pihak A, pihak B, ...',
+
+  kegiatan: 'Nama Kegiatan',
+  jenis: Rutin/Periodik, Strategis/Tematik, atau Local Expert,
+  bidang: pilih satu dari empat opsi 'daftar bidang' kegiatan,
+  waktu: '15 September 2024',
+  tempat: 'Tempat diselenggarakannya kegiatan',
+  pihak: 'pihak A, pihak B, ...',
+
+  ...
+
+`;
+
+const nilaiAdministratifSchema = {
   type: SchemaType.OBJECT,
   properties: {
     format: {
@@ -100,7 +458,7 @@ export const nilaiAdministratifSchema = {
   required: ['format', 'desain', 'penulisan'],
 };
 
-export const nilaiAdministratifPrompt = `
+const nilaiAdministratifPrompt = `
 anda merupakan seorang ahli dalam menilai dokumen.
 
 'struktur dokumen' yang baik memiliki bagian/bab/sub-bab:
@@ -163,7 +521,7 @@ berikan jawaban dalam format JSON di bawah.
 
 `;
 
-export const kegiatanPihakJsonSchema = {
+const kegiatanPihakJsonSchema = {
   type: SchemaType.ARRAY,
   items: {
     type: SchemaType.OBJECT,
@@ -199,7 +557,7 @@ export const kegiatanPihakJsonSchema = {
   },
 };
 
-export const kegiatanPihakJsonPrompt = `
+const kegiatanPihakJsonPrompt = `
 dari daftar kegiatan terlampir, identifikasi dan analisis kelompok 'pihak yang terlibat' pada setiap kegiatan.
 
 terdapat tiga kelompok 'jenis pihak', yaitu DJPb, Pemerintah Daerah (Pemda), dan Lainnya.
@@ -243,7 +601,7 @@ berikan jawaban dalam format JSON di bawah.
 
 `;
 
-export const kegiatanPihakJsonSchema2 = {
+const kegiatanPihakJsonSchema2 = {
   type: SchemaType.ARRAY,
   items: {
     type: SchemaType.OBJECT,
@@ -275,7 +633,7 @@ export const kegiatanPihakJsonSchema2 = {
   },
 };
 
-export const kegiatanPihakJsonPrompt2 = `
+const kegiatanPihakJsonPrompt2 = `
 dari daftar kegiatan terlampir, identifikasi dan analisis kelompok 'pihak yang terlibat' pada setiap kegiatan.
 
 terdapat tiga kelompok 'jenis pihak', yaitu DJPb, Pemerintah Daerah (Pemda), dan Lainnya.

@@ -248,7 +248,6 @@ class GraphHandler {
 };
 
 const mandatoryColumns = [
-  "Tanggal Pengumpulan",
   "Masalah atau Isu",
   "Kegiatan",
   "Kesimpulan dan Rekomendasi",
@@ -257,6 +256,7 @@ const mandatoryColumns = [
   "Nilai",
   "Text Format",
   "Kegiatan JSON",
+  "Tanggal Pengumpulan",
   "Triwulan",
 ];
 

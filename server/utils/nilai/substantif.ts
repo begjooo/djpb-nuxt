@@ -1,4 +1,3 @@
-
 // FILTER 'PIHAK' MENGGUNAKAN AI UNTUK KEPERLUAN NOMOR 5 DAN 7.b
 async function analisisPihakKegiatan(daftarKegiatanJson: any[]): Promise<any> {
   let nomor = 1;
@@ -373,8 +372,6 @@ async function analisisPihakKegiatan(daftarKegiatanJson: any[]): Promise<any> {
     return error;
   };
   console.log(`jumlah kegiatan pihak: ${kegiatanPihakJson.length}`);
-
-  // return daftarKegiatanPihakString;
   return kegiatanPihakJson;
 };
 
