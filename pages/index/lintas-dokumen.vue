@@ -17,7 +17,6 @@ let renderedResponseAi = '';
 
 async function submitQuery(){
   if(checkedFile.value.length !== 0){
-    console.log(checkedFile.value);
     responseAi.value = await useAskAi(inputQuery.value, checkedFile.value);
     renderedResponseAi = responseAi.value;
     // inputQuery.value = '';
@@ -35,7 +34,6 @@ async function submitQuery(){
           <TreeItemCheck :item="fkpknListRef" />
         </ul>
       </div>
-
     </div>
 
     <div class="border w-4/5 p-2 place-content-stretch">
@@ -54,22 +52,12 @@ async function submitQuery(){
       </div>
 
       <div class="py-2">
-        <div v-if="checkedFile.length === 0" >
-          <div class="text-gray-500 italic">Pilih laporan terlebih dahulu...</div>
-        </div>
         <div v-if="responseAi !== ''">
           <MDC :value="renderedResponseAi" class="border rounded-md md:w-auto p-2" />
         </div>
       </div>
 
     </div>
-
-    <!-- <div class="w-1/5 h-screen px-2 text-right">
-      <div>FKPKN Terpilih</div>
-      <ul v-for="item in checkedFile">
-        <li>{{ item }}</li>
-      </ul>
-    </div> -->
     
   </div>
 
