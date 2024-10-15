@@ -206,9 +206,9 @@ class GraphHandler {
     };
   };
 
-  async fillKegiatanJson(file: DriveFile): Promise<void> {
-    if (file.fields['KegiatanJSON'] === undefined ||
-        file.fields['KegiatanJSON'] === ''){
+  async fillKegiatanPihakJson(file: DriveFile): Promise<void> {
+    if (file.fields['JSONKegiatanPihak'] === undefined ||
+        file.fields['JSONKegiatanPihak'] === ''){
       let validText = file.fields["TextFormat"].replace(/(.{5000})/g, "$1\n");
       validText = validText.replace(/\"/g, "'");
       validText = validText.replace(/\”/g, "'");
@@ -216,14 +216,18 @@ class GraphHandler {
       validText = validText.replace(/\‘/g, "'");
       validText = validText.replace(/\’/g, "'");
 
-      console.log(`prompt Kegiatan JSON`);
-      let kegiatanJsonString = '';
+      console.log(`prompt ekstrak Kegiatan Pihak JSON`);
+      let responseJsonToString = '';
       try {
         const genAiResponse = await geminiHandler.processTextWithGemini(validText,
-          promptMap.get('KegiatanJSON').prompt,
-          promptMap.get('KegiatanJSON').schema,
+          promptMap.get('ekstrakKegiatanPihakJSON').prompt,
+          promptMap.get('ekstrakKegiatanPihakJSON').schema,
         );
-        kegiatanJsonString = JSON.stringify(genAiResponse);
+        // console.log(genAiResponse);
+        console.log(`jumlah kegiatan pihak: ${genAiResponse.length}`);
+        const tokenOutput = await geminiHandler.countResponseToken(JSON.stringify(genAiResponse));
+        console.log(`output token: ${tokenOutput}`);
+        responseJsonToString = JSON.stringify(genAiResponse);
       } catch (error) {
         throw error;
       };
@@ -231,7 +235,44 @@ class GraphHandler {
       console.log(`updating Kegiatan JSON column in SharePoint`);
       try {
         await this.updateSiteColumns(file.itemId, {
-          KegiatanJSON: kegiatanJsonString,
+          ['JSONKegiatanPihak']: responseJsonToString,
+        });
+      } catch (error) {
+        throw error;
+      };
+    };
+  };
+
+  async fillKegiatanNonPihakJson(file: DriveFile): Promise<void> {
+    if (file.fields['JSONKegiatanNonPihak'] === undefined ||
+        file.fields['JSONKegiatanNonPihak'] === ''){
+      let validText = file.fields["TextFormat"].replace(/(.{5000})/g, "$1\n");
+      validText = validText.replace(/\"/g, "'");
+      validText = validText.replace(/\”/g, "'");
+      validText = validText.replace(/\“/g, "'");
+      validText = validText.replace(/\‘/g, "'");
+      validText = validText.replace(/\’/g, "'");
+
+      console.log(`prompt ekstrak Kegiatan Non Pihak JSON`);
+      let responseJsonToString = '';
+      try {
+        const genAiResponse = await geminiHandler.processTextWithGemini(validText,
+          promptMap.get('ekstrakKegiatanNonPihakJSON').prompt,
+          promptMap.get('ekstrakKegiatanNonPihakJSON').schema,
+        );
+        // console.log(genAiResponse);
+        console.log(`jumlah kegiatan non pihak: ${genAiResponse.length}`);
+        const tokenOutput = await geminiHandler.countResponseToken(JSON.stringify(genAiResponse));
+        console.log(`output token: ${tokenOutput}`);
+        responseJsonToString = JSON.stringify(genAiResponse);
+      } catch (error) {
+        throw error;
+      };
+
+      console.log(`updating JSON Kegiatan Non Pihak column in SharePoint`);
+      try {
+        await this.updateSiteColumns(file.itemId, {
+          ['JSONKegiatanNonPihak']: responseJsonToString,
         });
       } catch (error) {
         throw error;
@@ -243,21 +284,23 @@ class GraphHandler {
     console.log(`check mandatory columns value in SharePoint Sites`);
     await this.fillTextFormat(file);
     file = await this.getDriveItem(file.id);
-    await this.fillKegiatanJson(file);
+    await this.fillKegiatanPihakJson(file);
+    await this.fillKegiatanNonPihakJson(file);
   };
 };
 
 const mandatoryColumns = [
-  "Masalah atau Isu",
-  "Kegiatan",
-  "Kesimpulan dan Rekomendasi",
+  "Text Format",
+  "JSON Kegiatan Pihak",
+  "JSON Kegiatan Non Pihak",
+  "Batas Triwulan",
+  "Tanggal Pengumpulan",
   "Nilai Administratif",
   "Nilai Substantif",
   "Nilai",
-  "Text Format",
-  "Kegiatan JSON",
-  "Tanggal Pengumpulan",
-  "Triwulan",
+  "Masalah atau Isu",
+  "Kegiatan",
+  "Kesimpulan dan Rekomendasi",
 ];
 
 export const graphHandler = new GraphHandler(

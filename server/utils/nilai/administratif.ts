@@ -1,50 +1,60 @@
 import fs from "fs";
 
 // NOMOR 1
-export function hitungKetepatanWaktu(input: string){
-  let nilai = 0;
-  if(input !== undefined){
-    nilai = 60;
-    if(input === '1-5 Hari'){
-      nilai = 100;
-    } else if(input === '6-10 Hari'){
-      nilai = 90;
-    } else if(input === '11-15 Hari'){
-      nilai = 80;
-    } else if(input === '16-20 Hari'){
-      nilai = 70;
-    };
-  };
-  console.log(`nilai ketepatan waktu pengumpulan: ${nilai}`);
-  return nilai * 0.2 * 0.4;
-};
+// export function hitungPengumpulan(triwulan: string, waktuPengumpulan: string){
+//   const waktuPengumpulanDate = new Date(waktuPengumpulan);
+//   const tahunPengumpulan = waktuPengumpulanDate.getFullYear();
+
+//   let tglBatas = '';
+//   let bulanBatas = '';
+//   if(triwulan === 'I'){
+//     tglBatas = '31';
+//     bulanBatas = '03';
+//   } else if(triwulan === 'II'){
+//     tglBatas = '30';
+//     bulanBatas = '06';
+//   } else if(triwulan === 'III'){
+//     tglBatas = '30';
+//     bulanBatas = '09';
+//   } else if(triwulan === 'IV'){
+//     tglBatas = '31';
+//     bulanBatas = '12';
+//   };
+//   const batasTW = new Date(`${tahunPengumpulan}-${bulanBatas}-${tglBatas}T07:00:00Z`);
+//   console.log(`batas triwulan ${triwulan} ${batasTW}`);
+//   console.log(`waktu pengumpulan ${waktuPengumpulanDate}`);
+
+//   const selisihWaktu = waktuPengumpulanDate.getTime() - batasTW.getTime();
+//   const selisihHari = Math.round(selisihWaktu / (1000 * 3600 * 24));
+//   console.log(`${selisihHari} hari setelah TW ${triwulan}`);
+  
+//   let nilai = 0;
+//   if(selisihHari){
+//     nilai = 60;
+//     if(selisihHari <= 5){
+//       nilai = 100;
+//     } else if(selisihHari > 5 && selisihHari <= 10){
+//       nilai = 90;
+//     } else if(selisihHari > 10 && selisihHari <= 15){
+//       nilai = 80;
+//     } else if(selisihHari > 15 && selisihHari <= 20){
+//       nilai = 70;
+//     };
+//   };
+  
+//   console.log(`nilai ketepatan waktu pengumpulan: ${nilai}`);
+//   return nilai * 0.2 * 0.4;
+// };
 
 export function hitungPengumpulan(triwulan: string, waktuPengumpulan: string){
+  const batasTW = new Date(triwulan);
   const waktuPengumpulanDate = new Date(waktuPengumpulan);
-  const tahunPengumpulan = waktuPengumpulanDate.getFullYear();
-
-  let tglBatas = '';
-  let bulanBatas = '';
-  if(triwulan === 'I'){
-    tglBatas = '31';
-    bulanBatas = '03';
-  } else if(triwulan === 'II'){
-    tglBatas = '30';
-    bulanBatas = '06';
-  } else if(triwulan === 'III'){
-    tglBatas = '30';
-    bulanBatas = '09';
-  } else if(triwulan === 'IV'){
-    tglBatas = '31';
-    bulanBatas = '12';
-  };
-  const batasTW = new Date(`${tahunPengumpulan}-${bulanBatas}-${tglBatas}T07:00:00Z`);
   console.log(`batas triwulan ${triwulan} ${batasTW}`);
   console.log(`waktu pengumpulan ${waktuPengumpulanDate}`);
 
   const selisihWaktu = waktuPengumpulanDate.getTime() - batasTW.getTime();
   const selisihHari = Math.round(selisihWaktu / (1000 * 3600 * 24));
-  console.log(`${selisihHari} hari setelah TW ${triwulan}`);
+  console.log(`${selisihHari} hari setelah batas TW ${batasTW}`);
   
   let nilai = 0;
   if(selisihHari){

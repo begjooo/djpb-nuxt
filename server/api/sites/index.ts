@@ -1,4 +1,4 @@
-import { graphHandler} from "../utils/graphHandler";
+import { graphHandler} from "../../utils/graphHandler";
 
 const { defaultSiteId, defaultDriveId, defaultListId } = useRuntimeConfig();
 

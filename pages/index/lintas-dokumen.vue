@@ -1,10 +1,6 @@
 <script setup lang="ts">
 
-import { parseMarkdown } from '@nuxtjs/mdc/runtime'
-
-// const fkpknList = await useFkpknList();
-
-const fkpknList = await useMapFilesAndFolder();
+const fkpknList = useState('map-files-and-folders');
 const fkpknListRef = ref({
   name: 'Folder Utama',
   children: fkpknList,
@@ -30,9 +26,7 @@ async function submitQuery(){
 
     <div class="w-1/5 h-screen p-2 text-sm">
       <div v-if="fkpknListRef">
-        <ul>
-          <TreeItemCheck :item="fkpknListRef" />
-        </ul>
+        <TreeItemCheck :item="fkpknListRef" />
       </div>
     </div>
 

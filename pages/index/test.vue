@@ -9,18 +9,6 @@ const responseUseState3 = useState('angka-3', () => {
 });
 
 const responseUseStateArrowX = useArrowX();
-const responseUseStateArrowX2 = useState('arrow-x');
-const responseUseStateFunctionX = useFunctionX();
-const responseUseStateFunctionX2 = useState('function-x');
-const responseUseStateFunctionY = useFunctionY();
-const responseUseStateFunctionY2 = useState('function-y');
-const responseUseStateAngka100 = useAngka100();
-
-const responseUseRefVar2 = useRefVar2();
-
-const responseUseStateString = useStateString();
-const responseUseRefString = useRefString();
-const responseUseRefString2 = useRefString2();
 
 const inputData = ref('');
 const responseUseInputFetch: any = ref('');
@@ -30,19 +18,15 @@ async function submitInput(){
   inputData.value = ''
 };
 
-const geminiFiles = await useGeminiFiles();
-console.log(geminiFiles);
+const geminiFiles: DriveFile = useState('gemini-files');
 
 const tanggalInput = ref('');
-
+let selisihHari = ref(0);
 async function submitTanggal(){
   const tw4 = new Date('2024-09-30');
   const date = new Date(tanggalInput.value);
   const sisaWaktu = date.getTime()- tw4.getTime();
-  const selisihHari = Math.round(sisaWaktu / (1000 * 3600 * 24));
-  console.log(selisihHari, 'hari');
-  // tanggalInput.value = await useInputFetch(inputData.value);
-  // inputData.value = ''
+  selisihHari.value = Math.round(sisaWaktu / (1000 * 3600 * 24));
 };
 
 const driveId = '01KXXEPH7RMST3ILNUGZC3CTMKNAYTPLIT';
@@ -77,7 +61,7 @@ const triwulanOptions = [
   ],
 ];
 
-const fkpknList = await useMapFilesAndFolder();
+const fkpknList = useState('map-files-and-folders');
 const fkpknListRef = ref({
   name: 'Daftar FKPKN',
   children: fkpknList,
@@ -89,7 +73,7 @@ const fkpknListRef = ref({
   <div class="p-2">
     
     <div>Tempat untuk testing</div>
-    
+
     <br>
 
     <div>useState</div>
@@ -105,34 +89,6 @@ const fkpknListRef = ref({
       <button class="hover:bg-blue-100 px-2 rounded" @click="responseUseState3 = responseUseState3 + 2">+</button>
     </div>
     <div>responseUseStateArrowX = {{ responseUseStateArrowX }}</div>
-    <div>responseUseStateArrowX2 = {{ responseUseStateArrowX2 }}</div>
-    <div>responseUseStateFunctionX = {{ responseUseStateFunctionX }}</div>
-    <div>responseUseStateFunctionX2 = {{ responseUseStateFunctionX2 }}</div>
-    <div>responseUseStateFunctionY = {{ responseUseStateFunctionY }}</div>
-    <div>responseUseStateFunctionY2 = {{ responseUseStateFunctionY2 }}</div>
-    <div>responseUseStateAngka100 =
-      <button class="hover:bg-blue-100 px-2 rounded" @click="responseUseStateAngka100--">-</button>
-      {{ responseUseStateAngka100 }}
-      <button class="hover:bg-blue-100 px-2 rounded" @click="responseUseStateAngka100++">+</button>
-    </div>
-    <div>responseUseRefVar2 =
-      <button class="hover:bg-blue-100 px-2 rounded" @click="responseUseRefVar2--">-</button>
-      {{ responseUseRefVar2 }}
-      <button class="hover:bg-blue-100 px-2 rounded" @click="responseUseRefVar2++">+</button>
-    </div>
-
-    <div>
-      useStateString <input class="border px-2" v-model="responseUseStateString" type="text" />
-      {{ responseUseStateString }}
-    </div>
-    <div>
-      useRefString <input class="border px-2" v-model="responseUseRefString" type="text" />
-      {{ responseUseRefString }}
-    </div>
-    <div>
-      useRefString2 <input class="border px-2" v-model="responseUseRefString2" type="text" />
-      {{ responseUseRefString2 }}
-    </div>
 
     <br>
 
@@ -168,7 +124,8 @@ const fkpknListRef = ref({
           <div><button class="border px-2 w-14">></button></div>
         </form>
       </div>
-      <div>{{ tanggalInput }}</div>
+      <div>tanggalInput: {{ tanggalInput }}</div>
+      <div>selisihHari: {{ selisihHari }} hari</div>
     </div>
 
     <br>
@@ -184,9 +141,7 @@ const fkpknListRef = ref({
     </div>
 
     <div>
-      <ul>
-        <TreeItem :model="fkpknListRef" />
-      </ul>
+      <TreeItem :item="fkpknListRef" />
     </div>
   </div>
 </template>

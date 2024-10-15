@@ -89,7 +89,7 @@ class GeminiHandler {
     
     ${prompt}
     `;
-    
+    // console.log(`\n${content}\n`);
     try {
       const result = await model.generateContent(content);
       if (jsonSchema){
@@ -146,6 +146,13 @@ class GeminiHandler {
     } catch (error) {
       throw error;
     };
+  };
+
+  async countResponseToken(text: string): Promise<number> {
+    const model = this.genAi.getGenerativeModel({
+      model: 'gemini-1.5-flash'});
+    const count = await model.countTokens(text);
+    return count.totalTokens;
   };
 };
 

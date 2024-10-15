@@ -1,6 +1,5 @@
 export default async function(){
-  const list = ref();
-  const { data } = await useFetch(`/api/site-columns`);
+  const list = useState('sites-column-list');
+  const { data } = await useFetch(`/api/sites/column-list`);
   list.value = data.value;
-  return list;
 };
