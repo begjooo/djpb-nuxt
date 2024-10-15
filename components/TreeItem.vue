@@ -1,38 +1,53 @@
 <script setup lang="ts">
+import type SharepointFile from "~/utils/SharepointFile";
 
-const props = defineProps({
-  item: Object,
+const props = defineProps<{ items: SharepointFile[] }>();
+
+
+interface DisplayItem extends SharepointFile {
+  isOpen?: boolean;
+}
+
+const showItems = computed(() => {
+  let modifiedItems: DisplayItem[];
+  modifiedItems = props.items;
+  return modifiedItems;
 });
-
-const isOpen = ref(false);
-const isFolder = computed(() => {
-  return props.item!.children;
-});
-
-function toggle(){
-  isOpen.value = !isOpen.value;
-};
-
 </script>
 
 <template>
   <div>
-    <div @click="toggle" :class="{ 'font-bold': isFolder }" class="hover:bg-blue-200 hover:rounded ">
-      <span v-if="isFolder">
-        <span v-if="isOpen">
-          <UIcon name="i-material-symbols:folder-open-outline-rounded" />
-        </span>
-        <span v-else>
-          <UIcon name="i-material-symbols:folder-outline-rounded" />
-        </span>
-      </span>
-      <span v-else>
-        <UIcon name="i-ic:outline-insert-drive-file" />
-      </span>
-      {{ item!.name }}
+    <div v-for="item in showItems">
+      <div>
+        <div class="flex">
+          <div>
+            <span v-if="item.type == 'folder'">
+              <span v-if="isOpen">
+                <UIcon name="i-material-symbols:folder-open-outline-rounded" />
+              </span>
+              <span v-else>
+                <UIcon name="i-material-symbols:folder-outline-rounded" />
+              </span>
+            </span>
+            <span v-else>
+              <UIcon name="i-ic:outline-insert-drive-file" />
+            </span>
+          </div>
+          <div
+            @click="item.isOpen=!item.isOpen"
+            :class="{ 'font-bold': item.type === 'folder' }"
+            class="hover:bg-blue-200 hover:rounded"
+          >
+            {{ item!.name }} 
+          </div>
+        </div>
+
+        <div>
+          <ul v-show="item.isOpen" v-if="item.type == 'folder'" class="pl-2">
+            <TreeItem :items="item!.children as SharepointFile[]" />
+          </ul>
+        </div>
+      </div>
     </div>
-    <ul v-show="isOpen" v-if="isFolder" class="pl-2">
-      <TreeItem v-for="item in item!.children" :item="item" />
-    </ul>
   </div>
 </template>

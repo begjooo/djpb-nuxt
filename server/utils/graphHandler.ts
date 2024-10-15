@@ -2,17 +2,18 @@ import { ClientSecretCredential } from "@azure/identity";
 import { Client } from "@microsoft/microsoft-graph-client";
 import { TokenCredentialAuthenticationProvider } from "@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials";
 import fs from "fs";
+import type SharepointFile from "./SharepointFile";
 
 const { azureClientId, azureTenantId, azureClientSecret } = useRuntimeConfig();
 const { defaultSiteId, defaultDriveId, defaultListId } = useRuntimeConfig();
 
 export interface SiteColumn {
-  [field: string]: any,
-};
+  [field: string]: any;
+}
 
 export interface DriveFile {
-  [field: string]: any,
-};
+  [field: string]: any;
+}
 
 class GraphHandler {
   defaultSiteId: string;
@@ -23,49 +24,49 @@ class GraphHandler {
 
   constructor(
     azureOptions: {
-      azureTenantId: string,
-      azureClientId: string,
-      azureClientSecret: string,
+      azureTenantId: string;
+      azureClientId: string;
+      azureClientSecret: string;
     },
     siteOptions: {
-      defaultSiteId: string,
-      defaultDriveId: string,
-      defaultListId: string,
+      defaultSiteId: string;
+      defaultDriveId: string;
+      defaultListId: string;
     },
-    mandatoryColumns: string[],
-  ){
+    mandatoryColumns: string[]
+  ) {
     this.defaultSiteId = siteOptions.defaultSiteId;
     this.defaultDriveId = siteOptions.defaultDriveId;
     this.defaultListId = siteOptions.defaultListId;
     this.mandatoryColumns = mandatoryColumns;
-    
+
     try {
       const credential = new ClientSecretCredential(
         azureOptions.azureTenantId,
         azureOptions.azureClientId,
-        azureOptions.azureClientSecret,
+        azureOptions.azureClientSecret
       );
 
-      const authProviders = new TokenCredentialAuthenticationProvider(credential, {
-        scopes: ['https://graph.microsoft.com/.default'],
+      const authProviders = new TokenCredentialAuthenticationProvider(
+        credential,
+        {
+          scopes: ["https://graph.microsoft.com/.default"],
+        }
+      );
+
+      this.graphClient = Client.initWithMiddleware({
+        authProvider: authProviders,
       });
-
-      this.graphClient = Client.initWithMiddleware({ authProvider: authProviders });
-
     } catch (error) {
       console.log(error);
-    };
-  };
+    }
+  }
 
-  async mapFilesAndFolders(itemId?: string): Promise<any> {
+  async mapFilesAndFolders(itemId?: string): Promise<SharepointFile[]> {
     let driveItems = null;
-    try {
-      driveItems = await this.graphClient!
-        .api(`/sites/${this.defaultSiteId}/drive/items/${itemId}/children?expand=listItem`)
-        .get();
-    } catch (error) {
-      return error;
-    };
+    driveItems = await this.graphClient!.api(
+      `/sites/${this.defaultSiteId}/drive/items/${itemId}/children?expand=listItem`
+    ).get();
 
     const items = driveItems.value.map((item: any) => {
       if (item.folder) {
@@ -87,29 +88,30 @@ class GraphHandler {
       };
     });
 
-    const children: any = [];
+    const children: SharepointFile[] = [];
     children.push(...items);
     const foldersArray = items.filter((item: any) => item.type === "folder");
 
     for (const folder of foldersArray) {
       const childrenBelow = await this.mapFilesAndFolders(folder.id);
       const folderItems = children.find((item: any) => item.id === folder.id);
-      children[children.indexOf(folderItems)].children = childrenBelow;
+      children[children.indexOf(folderItems as SharepointFile)].children =
+        childrenBelow;
     }
 
     return children;
-  };
+  }
 
   async getSiteColumns(listId?: string): Promise<any> {
-    let api = '';
-    if (listId){
-      api = `/sites/${this.defaultSiteId}/lists/${listId}/columns`
+    let api = "";
+    if (listId) {
+      api = `/sites/${this.defaultSiteId}/lists/${listId}/columns`;
     } else {
       api = `/sites/${this.defaultSiteId}/lists/${defaultListId}/columns`;
-    };
+    }
     const columns = await this.graphClient!.api(api).get();
     return columns.value;
-  };
+  }
 
   async createSiteColumn(displayName: string, listId?: string): Promise<void> {
     console.log(`create ${displayName} column in SharePoint Sites`);
@@ -127,13 +129,13 @@ class GraphHandler {
     };
 
     let api = "";
-    if (listId){
+    if (listId) {
       api = `/sites/${this.defaultSiteId}/lists/${listId}/columns`;
     } else {
       api = `/sites/${this.defaultSiteId}/lists/${this.defaultListId}/columns`;
-    };
+    }
     await this.graphClient!.api(api).post(columnDefinition);
-  };
+  }
 
   async checkMandatorySiteColumns(listId?: string): Promise<void> {
     console.log(`check mandatory columns in SharePoint Sites`);
@@ -143,20 +145,20 @@ class GraphHandler {
       return !columnListName.includes(columnName);
     });
 
-    if (notExistColumns.length !== 0){
+    if (notExistColumns.length !== 0) {
       console.log(`create mandatory columns in SharePoint Sites`);
-      for await (const column of notExistColumns){
+      for await (const column of notExistColumns) {
         try {
           await this.createSiteColumn(column);
         } catch (error) {
           throw error;
-        };
-      };
+        }
+      }
       console.log(`${notExistColumns} is added in SharePoint`);
     } else {
       console.log(`mandatory columns are already exist in SharePoint`);
-    };
-  };
+    }
+  }
 
   async getDriveItem(driveItemId: any): Promise<any> {
     const driveItem = await this.graphClient!.api(
@@ -171,28 +173,30 @@ class GraphHandler {
       downloadUrl: driveItem["@microsoft.graph.downloadUrl"],
       fields: driveItem.listItem.fields,
     };
-  };
+  }
 
   async updateSiteColumns(itemId: string, column: SiteColumn): Promise<void> {
-    await this.graphClient!
-      .api(`/sites/${this.defaultSiteId}/lists/${this.defaultListId}/items/${itemId}/fields`)
-      .update(column);
-  };
+    await this.graphClient!.api(
+      `/sites/${this.defaultSiteId}/lists/${this.defaultListId}/items/${itemId}/fields`
+    ).update(column);
+  }
 
   async getSharePointFile(file: DriveFile): Promise<void> {
-    if (!fileHandler.isFileDownloaded(file.fileName)){
+    if (!fileHandler.isFileDownloaded(file.fileName)) {
       try {
         await fileHandler.downloadFile(file.downloadUrl, file.name);
         file.localPath = fileHandler.downloadDirPath + file.name;
       } catch (error) {
         throw error;
-      };
-    };
-  };
+      }
+    }
+  }
 
   async fillTextFormat(file: DriveFile): Promise<void> {
-    if (file.fields['TextFormat'] === undefined ||
-        file.fields['TextFormat'] === ''){
+    if (
+      file.fields["TextFormat"] === undefined ||
+      file.fields["TextFormat"] === ""
+    ) {
       await this.getSharePointFile(file);
       const pdfText = await fileHandler.pdfParse(file.localPath);
       const validText = pdfText.replace(/[\x00]/g, "");
@@ -201,14 +205,16 @@ class GraphHandler {
         await this.updateSiteColumns(file.itemId, { TextFormat: validText });
       } catch (error) {
         throw error;
-      };
+      }
       fs.unlinkSync(file.localPath);
-    };
-  };
+    }
+  }
 
   async fillKegiatanPihakJson(file: DriveFile): Promise<void> {
-    if (file.fields['JSONKegiatanPihak'] === undefined ||
-        file.fields['JSONKegiatanPihak'] === ''){
+    if (
+      file.fields["JSONKegiatanPihak"] === undefined ||
+      file.fields["JSONKegiatanPihak"] === ""
+    ) {
       let validText = file.fields["TextFormat"].replace(/(.{5000})/g, "$1\n");
       validText = validText.replace(/\"/g, "'");
       validText = validText.replace(/\”/g, "'");
@@ -217,35 +223,40 @@ class GraphHandler {
       validText = validText.replace(/\’/g, "'");
 
       console.log(`prompt ekstrak Kegiatan Pihak JSON`);
-      let responseJsonToString = '';
+      let responseJsonToString = "";
       try {
-        const genAiResponse = await geminiHandler.processTextWithGemini(validText,
-          promptMap.get('ekstrakKegiatanPihakJSON').prompt,
-          promptMap.get('ekstrakKegiatanPihakJSON').schema,
+        const genAiResponse = await geminiHandler.processTextWithGemini(
+          validText,
+          promptMap.get("ekstrakKegiatanPihakJSON").prompt,
+          promptMap.get("ekstrakKegiatanPihakJSON").schema
         );
         // console.log(genAiResponse);
         console.log(`jumlah kegiatan pihak: ${genAiResponse.length}`);
-        const tokenOutput = await geminiHandler.countResponseToken(JSON.stringify(genAiResponse));
+        const tokenOutput = await geminiHandler.countResponseToken(
+          JSON.stringify(genAiResponse)
+        );
         console.log(`output token: ${tokenOutput}`);
         responseJsonToString = JSON.stringify(genAiResponse);
       } catch (error) {
         throw error;
-      };
+      }
 
       console.log(`updating Kegiatan JSON column in SharePoint`);
       try {
         await this.updateSiteColumns(file.itemId, {
-          ['JSONKegiatanPihak']: responseJsonToString,
+          ["JSONKegiatanPihak"]: responseJsonToString,
         });
       } catch (error) {
         throw error;
-      };
-    };
-  };
+      }
+    }
+  }
 
   async fillKegiatanNonPihakJson(file: DriveFile): Promise<void> {
-    if (file.fields['JSONKegiatanNonPihak'] === undefined ||
-        file.fields['JSONKegiatanNonPihak'] === ''){
+    if (
+      file.fields["JSONKegiatanNonPihak"] === undefined ||
+      file.fields["JSONKegiatanNonPihak"] === ""
+    ) {
       let validText = file.fields["TextFormat"].replace(/(.{5000})/g, "$1\n");
       validText = validText.replace(/\"/g, "'");
       validText = validText.replace(/\”/g, "'");
@@ -254,31 +265,34 @@ class GraphHandler {
       validText = validText.replace(/\’/g, "'");
 
       console.log(`prompt ekstrak Kegiatan Non Pihak JSON`);
-      let responseJsonToString = '';
+      let responseJsonToString = "";
       try {
-        const genAiResponse = await geminiHandler.processTextWithGemini(validText,
-          promptMap.get('ekstrakKegiatanNonPihakJSON').prompt,
-          promptMap.get('ekstrakKegiatanNonPihakJSON').schema,
+        const genAiResponse = await geminiHandler.processTextWithGemini(
+          validText,
+          promptMap.get("ekstrakKegiatanNonPihakJSON").prompt,
+          promptMap.get("ekstrakKegiatanNonPihakJSON").schema
         );
         // console.log(genAiResponse);
         console.log(`jumlah kegiatan non pihak: ${genAiResponse.length}`);
-        const tokenOutput = await geminiHandler.countResponseToken(JSON.stringify(genAiResponse));
+        const tokenOutput = await geminiHandler.countResponseToken(
+          JSON.stringify(genAiResponse)
+        );
         console.log(`output token: ${tokenOutput}`);
         responseJsonToString = JSON.stringify(genAiResponse);
       } catch (error) {
         throw error;
-      };
+      }
 
       console.log(`updating JSON Kegiatan Non Pihak column in SharePoint`);
       try {
         await this.updateSiteColumns(file.itemId, {
-          ['JSONKegiatanNonPihak']: responseJsonToString,
+          ["JSONKegiatanNonPihak"]: responseJsonToString,
         });
       } catch (error) {
         throw error;
-      };
-    };
-  };
+      }
+    }
+  }
 
   async checkMandatoryColumnsValue(file: DriveFile): Promise<void> {
     console.log(`check mandatory columns value in SharePoint Sites`);
@@ -286,8 +300,8 @@ class GraphHandler {
     file = await this.getDriveItem(file.id);
     await this.fillKegiatanPihakJson(file);
     await this.fillKegiatanNonPihakJson(file);
-  };
-};
+  }
+}
 
 const mandatoryColumns = [
   "Text Format",
@@ -306,5 +320,5 @@ const mandatoryColumns = [
 export const graphHandler = new GraphHandler(
   { azureTenantId, azureClientId, azureClientSecret },
   { defaultSiteId, defaultDriveId, defaultListId },
-  mandatoryColumns,
+  mandatoryColumns
 );
