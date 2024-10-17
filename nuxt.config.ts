@@ -1,15 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: "2024-04-03",
+  compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
-  modules: ["@nuxtjs/mdc", "@nuxt/ui"],
-  typescript: {
-    tsConfig: {
-      compilerOptions: {
-        baseUrl: ".",
-      },
-    },
-  },
+  modules: ['@nuxtjs/mdc', '@nuxt/ui'],
   runtimeConfig: {
     myApiKey: process.env.MY_API_KEY,
     azureClientId: process.env.AZURE_CLIENT_ID,
@@ -21,4 +14,4 @@ export default defineNuxtConfig({
     geminiApiKey: process.env.GEMINI_API_KEY,
     pineconeApiKey: process.env.PINECONE_API_KEY,
   },
-});
+})

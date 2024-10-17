@@ -1,5 +1,5 @@
 export default defineEventHandler(async (event) => {
-  console.log(`[/api/lintas-dokumen]: ask-ai`);
+  console.log(`\n[/api/lintas-dokumen]: ask-ai`);
   const { query, sources } = await readBody(event);
   // console.log(`query: ${query}`);
   // console.log(`sources: ${sources}`);
@@ -15,6 +15,7 @@ export default defineEventHandler(async (event) => {
     fileContent = fileContent.replace(/\’/g, '\'');
     allSources += `=== ${file.name} ===\n${fileContent}\n===\n\n`
   };
+  
   const response = await geminiHandler.processTextWithGemini(allSources, query);
   console.log(`[/api/lintas-dokumen]: done`);
   return response;

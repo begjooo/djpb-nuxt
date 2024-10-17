@@ -113,12 +113,12 @@ function hitungFormat(dataFormat: any){
 
 // ANALSIS PDF UNTUK NOMOR 2-4
 async function analisisPDF(file: DriveFile): Promise<any> {
-  if(!(await geminiHandler.isFileInGemini(file))){
+  if(!(await geminiHandler.isFileInGemini(file, 'application/pdf'))){
     if(!fileHandler.isFileDownloaded(file.name)){
       await fileHandler.downloadFile(file.downloadUrl, file.name);
       file.localPath = fileHandler.downloadDirPath + file.name;
     };
-    await geminiHandler.uploadFileToGemini(file);
+    await geminiHandler.uploadFileToGemini(file, file.localPath, 'application/pdf');
   };
   await geminiHandler.checkActiveFileInGemini(file);
   if(file.localPath){
@@ -145,7 +145,7 @@ export async function hitungNilaiAdministratif(file: DriveFile): Promise<any> {
 
   if(file.fields['NilaiAdministratif'] === undefined || file.fields['NilaiAdministratif'] === ''){
     const hasilAnalisis = await analisisPDF(file);
-    
+    console.log(hasilAnalisis);
     // const hasilAnalisis = {
     //     "format": {
     //         "Kata Pengantar": true,

@@ -1,13 +1,17 @@
 <script setup lang="ts">
 
-const fkpknList = useState('map-files-and-folders');
+const fkpknList = useState<SharepointItem[]>('folders-and-files');
+
+const currentFolderId = useState<string>('current-folder-id');
+const currentFolderName = useState<string>('current-folder-name', () => 'root');
+const fkpknInFolder = useState<SharepointItem[]>('files-in-current-folder', () => {
+  return fkpknList.value.filter((item: any) => item.type === 'file');
+});
+
 const fkpknListRef = ref({
-  name: 'Folder Utama',
+  name: 'root',
   children: fkpknList,
 });
-const currentFolderId: any = useState('selected-folder-id');
-const currentFolderName = useState('selected-folder-name');
-const fkpknInFolder = useState('files-in-folder');
 
 async function updateNilai(driveItemId: string){
   console.log(`update nilai: ${driveItemId}`);

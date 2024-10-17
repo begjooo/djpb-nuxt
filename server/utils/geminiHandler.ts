@@ -1,6 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GoogleAIFileManager } from "@google/generative-ai/server";
-import { type DriveFile } from "./graphHandler";
 
 const { geminiApiKey } = useRuntimeConfig();
 
@@ -18,10 +17,11 @@ class GeminiHandler {
     return listFiles.files;
   };
 
-  async isFileInGemini(file: DriveFile): Promise<boolean> {
+  async isFileInGemini(file: DriveFile, mimeType: string): Promise<boolean> {
     const listFiles = await this.getAllGeminiFiles();
     if (listFiles){
-      const fileCheck = listFiles.find(item => item.displayName === file.name);
+      // const fileCheck = listFiles.find(item => item.displayName === file.name);
+      const fileCheck = listFiles.find(item => item.displayName === `${mimeType}-${file.id}`);
       if (fileCheck){
         console.log(`${file.name} is in Gemini`);
         file.uri = fileCheck.uri;
@@ -38,12 +38,12 @@ class GeminiHandler {
     };
   };
 
-  async uploadFileToGemini(file: DriveFile): Promise<DriveFile> {
+  async uploadFileToGemini(file: DriveFile, filePath: string, mimeType: string): Promise<DriveFile> {
     console.log(`upload "${file.name}" to Gemini ...`);
   
-    const uploadFile = await this.fileManager.uploadFile(file.localPath, {
-      mimeType: file.mimeType,
-      displayName: file.name,
+    const uploadFile = await this.fileManager.uploadFile(filePath, {
+      mimeType: mimeType,
+      displayName: `${mimeType}-${file.id}`,
     });
   
     file.uri = uploadFile.file.uri;

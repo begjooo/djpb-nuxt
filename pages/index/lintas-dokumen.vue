@@ -1,21 +1,15 @@
 <script setup lang="ts">
 
-const fkpknList = useState('map-files-and-folders');
-const fkpknListRef = ref({
-  name: 'Folder Utama',
-  children: fkpknList,
-});
-
-const checkedFile: any = useState('selected-files-for-lintas-dok');
+const fkpknList = useState<SharepointItem[]>('folders-and-files');
+const selectedFiles = useState<string[]>('selected-files-for-lintas-dok', () => []);
 const inputQuery = ref('');
 const responseAi = ref('');
 let renderedResponseAi = '';
 
 async function submitQuery(){
-  if(checkedFile.value.length !== 0){
-    responseAi.value = await useAskAi(inputQuery.value, checkedFile.value);
+  if(selectedFiles.value.length !== 0){
+    responseAi.value = await useAskAi(inputQuery.value, selectedFiles.value);
     renderedResponseAi = responseAi.value;
-    // inputQuery.value = '';
   };
 };
 
@@ -25,9 +19,7 @@ async function submitQuery(){
   <div class="flex">
 
     <div class="w-1/5 h-screen p-2 text-sm">
-      <div v-if="fkpknListRef">
-        <TreeItemCheck :item="fkpknListRef" />
-      </div>
+      <TreeItemCheck :items="fkpknList" />
     </div>
 
     <div class="border w-4/5 p-2 place-content-stretch">

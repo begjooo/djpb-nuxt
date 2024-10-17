@@ -13,13 +13,11 @@ function toggle(){
   isOpen.value = !isOpen.value;
 };
 
-const currentFolderName = useState('selected-folder-name', () => '');
-
 async function selectedFolder(driveItemId: string, folderName: string){
-  currentFolderName.value = folderName;
   const files = props.item!.children.filter((item: any) => item.type === 'file');
-  useState('files-in-folder').value = files;
-  useState('selected-folder-id').value = driveItemId;
+  useState('current-folder-id').value = driveItemId;
+  useState('current-folder-name').value = folderName;
+  useState('files-in-current-folder').value = files;
 };
 
 </script>
@@ -43,10 +41,7 @@ async function selectedFolder(driveItemId: string, folderName: string){
         {{ item!.name }}
       </UButton>
     </span>
-    <span v-if="item!.type === 'file'" class="">
-      <UIcon name="i-ic:outline-insert-drive-file" /> {{ item!.name }}
-    </span>
-    <ul v-show="isOpen" v-if="isFolder" class="pl-2 border-l border-amber-500 border-b pb-1 mb-1 rounded">
+    <ul v-show="isOpen" v-if="isFolder" class="pl-2">
       <TreePenilaian v-for="item in item!.children" :item="item" />
     </ul>
   </div>

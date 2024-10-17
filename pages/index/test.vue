@@ -29,7 +29,9 @@ async function submitTanggal(){
   selisihHari.value = Math.round(sisaWaktu / (1000 * 3600 * 24));
 };
 
-const driveId = '01KXXEPH7RMST3ILNUGZC3CTMKNAYTPLIT';
+// const driveId = '01KXXEPH7RMST3ILNUGZC3CTMKNAYTPLIT';
+// const driveId = '01KXXEPH4WHCQMV2Z3PRD2ZNCYDTCVM4DG';
+const driveId = '01KXXEPH2M2GYUGRVTBBEJYKIIBMBVEFFI';
 const driveItem: any = await useDriveItem(driveId);
 
 const triwulanOptions = [
@@ -131,7 +133,7 @@ const fkpknListRef = ref({
     <br>
 
     <div>
-      {{ driveItem.name }}
+      driveName: <!-- {{ driveItem.name }} -->
     </div>
 
     <div>

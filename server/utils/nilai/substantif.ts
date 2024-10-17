@@ -1,10 +1,10 @@
 // FILTER 'PIHAK' MENGGUNAKAN AI UNTUK KEPERLUAN NOMOR 5 DAN 7.b
 async function analisisPihakKegiatan(daftarKegiatanJson: any[]): Promise<any> {
   let nomor = 1;
-  let daftarKegiatanPihakString = '=== DAFTAR KEGIATAN BESERTA PIHAK YANG TERLIBAT ===\n\n';
+  let daftarKegiatanPihakString = '=== DAFTAR KEGIATAN BESERTA PIHAK YANG HADIR ===\n\n';
   daftarKegiatanJson.forEach((item: any) => {
     const text = `${nomor}. ${item.kegiatan}
-    \t- Pihak yang terlibat: ${item.pihak}
+    \t- Pihak yang hadir: ${item.pihak}
     \n`;
     daftarKegiatanPihakString += text;
     nomor++;
@@ -98,8 +98,12 @@ function hitungPublikasi(daftarKegiatanJson: any[]){
 
 // NILAI KEGIATAN PEMDA (NOMOR 7.b)
 function hitungKegiatanPemda(daftarKegiatanJson: any[], totalKegiatan: number){
+  console.log('kegiatan dengan pemda');
   const kegiatanPemda = daftarKegiatanJson.filter((item: any) => {
-      return item.pemda === true;
+    if(item.pemda === true){
+      console.log('- ', item.kegiatan);
+    };
+    return item.pemda === true;
   });
   const nKegiatanPemda = kegiatanPemda.length;
   // console.log(`jumlah kegiatan dengan Pemda: ${nKegiatanPemda} kegiatan`);
@@ -137,11 +141,11 @@ function hitungKegiatanPemda(daftarKegiatanJson: any[], totalKegiatan: number){
 
 // NILAI KEGIATAN FORUM/TIM DI SUATU DAERAH (NOMOR 7.c)
 function hitungKegiatanForum(daftarKegiatanJson: any[]){
-  // console.log(`kegiatan forum/tim di daerah:`);
   const kegiatanForum = daftarKegiatanJson.filter((item: any) => {
-    // console.log(`- ${item.kegiatan}`);
-    return item.forum !== null;
+    return item.forum !== false;
   });
+  // console.log(`kegiatan forum/tim di daerah:`);
+  // console.log(kegiatanForum);
   const nKegiatanForum = kegiatanForum.length;
   console.log(`jumlah kegiatan forum/tim di suatu daerah: ${nKegiatanForum}`);
   
@@ -181,7 +185,11 @@ function hitungInovasi(daftarKegiatanJson: any[]){
 
 // NILAI KEGIATAN HIGH LEVEL MEETING (NOMOR 7.e)
 function hitungJumlahKegiatanHighLevel(daftarKegiatanJson: any[]){
+  console.log('kegiatan high level meeting');
   const kegiatanHighLevel = daftarKegiatanJson.filter((item: any) => {
+    if(item.pejabat.length !== 0){
+      console.log('- ', item.kegiatan);
+    };
     // return item.pejabat !== 'Lainnya';
     return item.pejabat.length !== 0;
   });
@@ -241,7 +249,7 @@ function hitungKegiatanHighLevel(daftarKegiatanJson: any[]){
 // NILAI REKOMENDASI
 async function hitungRekomendasi(source: string): Promise<any>{
   let nilaiRekomendasi:any = null;
-  let validText = source.replace(/(.{5000})/g, "$1\n");
+  let validText = source.replace(/(.{2000})/g, "$1\n");
   validText = validText.replace(/\"/g, "'");
   validText = validText.replace(/\”/g, "'");
   validText = validText.replace(/\“/g, "'");
@@ -271,7 +279,7 @@ export async function hitungNilaiSubstantif(file: DriveFile): Promise<any> {
     console.log(`jumlah total kegiatan: ${nKegiatanPihak}`);
   
     const pihakKegiatan = await analisisPihakKegiatan(daftarKegiatanPihakJson);
-    // console.log(pihakKegiatan);
+    console.log(pihakKegiatan);
     // const jumlahDJPb = pihakKegiatan.filter((item: any) => item.djpb === true);
     // console.log(`jumlah kegiatan DJPb: ${jumlahDJPb.length}`);
     const nilaiKegiatanNonDjpb = hitungKegiatanNonDjpb(pihakKegiatan, nKegiatanPihak);
