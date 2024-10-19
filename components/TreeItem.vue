@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-const props = defineProps<{ items: SharepointItem[] }> ();
+const props = defineProps<{ items: SharepointItem[] }>();
 
 interface DisplayItem extends SharepointItem {
   isOpen?: boolean,

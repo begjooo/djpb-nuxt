@@ -6,6 +6,7 @@ class FileHandler {
   downloadDirPath: string;
 
   constructor(downloadDirPath: string){
+    console.log('[server] fileHandler');
     this.downloadDirPath = downloadDirPath;
     
     if(!fs.existsSync('./public')){

@@ -1792,6 +1792,62 @@ berikan dalam format JSON di bawah.
 
 `;
 
+const rincianKegiatanPrompt = `
+anda adalah seorang ahli dalam memparsing dan mengekstrak kegiatan pada suatu dokumen.
+tugas anda adalah memparsing kegiatan yang diminta dan mengekstrak isi dari kegiatan berdasarkan dokumen terlampir.
+isi kegiatan yang harus anda ekstrak adalah:
+- nama kegiatan
+- waktu kegiatan
+- tempat kegiatan
+- pihak/unit yang terlibat/hadir
+- rincian kegiatan
+- hasil kegiatan
+
+berikan jawaban dengan urutan:
+- nama
+- waktu
+- tempat
+- pihak yang terlibat
+- rincian
+- hasil
+
+========================
+
+Kegiatan yang diminta: `;
+
+const analisisKegiatanPrompt = `
+anda adalah seorang ahli dalam memparsing dan mengekstrak kegiatan pada suatu dokumen.
+tugas anda menganalisis kegiatan yang diminta.
+dalam melaksanakan tugas anda, terdapat tahapan yang harus anda lakukan, yaitu:
+1. parsing kegiatan yang diminta dan ekstrak isi dari kegiatan berdasarkan dokumen terlampir.
+  isi kegiatan yang harus anda ekstrak adalah:
+  - nama kegiatan
+  - waktu kegiatan
+  - tempat kegiatan
+  - pihak/unit yang terlibat/hadir
+  - rincian kegiatan
+  - hasil kegiatan
+
+2. analisis kegiatan berdasarkan hasil parsing dan ekstraksi anda dengan mempertimbangkan:
+  - apakah kegiatan melibatkan pihak eksternal Non-DJPb (Ditje Perbendaharaan)?
+  - apakah kegiatan melibatkan Pemerintah Daerah (Pemda)?
+  - apakah kegiatan tersebut memenuhi kriteria kegiatan forum/tim daerah? sebutkan alasan berdasarkan kriterianya.
+  - adakah pejabat pemda tingkat gubernur, walikota, bupati atau para wakilnya pada kegiatan tersebut?
+
+tidak perlu memberikan rincian kegiatan pada jawaban.
+berikan markdown pada jawaban.
+
+hanya berikan jawaban dari hasil analisis anda dengan format di bawah.
+**Pihak Non-DJPb**: aaa, bbb -> hanya masukan pihak dari yang bukan dari DJPb dan Pemda.
+
+**Pemda**: aaa, bbb -> hanya masukan pihak dari Pemda.
+
+**Forum/Tim di Daerah**: Ya, karena ...
+
+**Pejabat Pemda**: Tidak ada pejabat di tingkat gubernur, walikota, maupun bupati pada kegiatan ini.
+
+`;
+
 export const promptMap = new Map();
 
 promptMap.set('ekstrakKegiatanNonPihakJSON', {
@@ -1818,3 +1874,6 @@ promptMap.set('rekomendasi', {
   prompt: rekomendasiPrompt,
   schema: rekomendasiSchema,
 });
+
+promptMap.set('rincianKegiatan', rincianKegiatanPrompt);
+promptMap.set('analisisKegiatan', analisisKegiatanPrompt);

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-const props = defineProps<{ items: SharepointItem[] }> ();
+const props = defineProps<{ items: SharepointItem[] }>();
 
 const selectedFiles = useState<string[]>('selected-files-for-lintas-dok');
 

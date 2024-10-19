@@ -62,7 +62,7 @@ async function hapusNilai(itemId: string, columnName: string){
         <tbody>
           <tr v-for="file in fkpknInFolder" class="border-y-2 text-center hover:font-bold hover:bg-blue-100">
             <td class="text-right">
-              <span class="pr-2">{{ file['name'] }}</span>
+              <NuxtLink :to="`/nilai/${file['id']}`" class="pr-2">{{ file['name'] }}</NuxtLink>
               <UTooltip text="Update Nilai" class="align-middle">
                 <UButton
                   trailing-icon="i-material-symbols:refresh" size="2xs"

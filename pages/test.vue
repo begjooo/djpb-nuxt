@@ -63,7 +63,7 @@ const triwulanOptions = [
   ],
 ];
 
-const fkpknList = useState('map-files-and-folders');
+const fkpknList = useState<SharepointItem[]>('folder-and-files');
 const fkpknListRef = ref({
   name: 'Daftar FKPKN',
   children: fkpknList,
@@ -143,7 +143,7 @@ const fkpknListRef = ref({
     </div>
 
     <div>
-      <TreeItem :item="fkpknListRef" />
+      <TreeItem :items="fkpknList" />
     </div>
   </div>
 </template>
