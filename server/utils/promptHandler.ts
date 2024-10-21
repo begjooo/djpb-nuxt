@@ -1829,9 +1829,23 @@ dalam melaksanakan tugas anda, terdapat tahapan yang harus anda lakukan, yaitu:
   - hasil kegiatan
 
 2. analisis kegiatan berdasarkan hasil parsing dan ekstraksi anda dengan mempertimbangkan:
-  - apakah kegiatan melibatkan pihak eksternal Non-DJPb (Ditje Perbendaharaan)?
+  - apakah kegiatan melibatkan pihak eksternal Non-DJPb (Ditjen Perbendaharaan)?
   - apakah kegiatan melibatkan Pemerintah Daerah (Pemda)?
-  - apakah kegiatan tersebut memenuhi kriteria kegiatan forum/tim daerah? sebutkan alasan berdasarkan kriterianya.
+  - apa bidang kegiatan ini? berikan alasannya.
+  - apakah rincian atau hasil kegiatan dipublikasikan atau dikomunikasikan ke masyarakat atau publik?
+  - apakah kegiatan tersebut merupakan 'KEGIATAN FORUM/TIM DI DAERAH'?
+    - berdasarkan daerah dilaksanakan, apakah kegiatan tersebut memenuhi 'KEGIATAN FORUM/TIM DI DAERAH'? 
+    - kriteria 'KEGIATAN FORUM/TIM DI DAERAH':
+      - Kegiatan dilaksanakan di wilayah/tingkat/lingkup/cakupan DESA, KELURAHAN, atau KECAMATAN.
+      - Kegiatan BERHUBUNGAN LANGSUNG dengan 'daerah' DESA, KELURAHAN, atau KECAMATAN.
+      - Melibatkan pihak/stakeholder Non-DJPb yaitu melibatkan organisasi atau masyarakat di 'daerah' (DESA, KELURAHAN, atau KECAMATAN) tersebut, baik sebagai peserta, pengambil keputusan, atau pemangku kepentingan.
+      - Mengatasi masalah atau peluang spesifik yang dihadapi masyarakat di 'daerah' (DESA, KELURAHAN, atau KECAMATAN).
+      - Menerapkan ide dan solusi melalui proyek konkret yang bermanfaat bagi masyarakat di 'daerah' (DESA, KELURAHAN, atau KECAMATAN).
+      - Memiliki rencana dan upaya untuk menjalankan kegiatan secara berkelanjutan, bukan hanya kegiatan satu kali.
+    - jika kegiatan dilaksanakan di wilayah/tingkat/lingkup/cakupan KOTA, KABUPATEN, atau PROVINSI, maka kegiatan tersebut BUKAN KEGIATAN FORUM/TIM DI DAERAH.
+    - seluruh kriteria 'kegiatan forum/tim di daerah' HARUS terpenuhi.
+    - berikan Ya jika seluruh kriteria 'kegiatan forum/tim di daerah' terpenuhi.
+    - jika tidak memenuhi kriteria 'kegiatan forum/tim di daerah', berikan Tidak.
   - adakah pejabat pemda tingkat gubernur, walikota, bupati atau para wakilnya pada kegiatan tersebut?
 
 tidak perlu memberikan rincian kegiatan pada jawaban.
@@ -1841,6 +1855,10 @@ hanya berikan jawaban dari hasil analisis anda dengan format di bawah.
 **Pihak Non-DJPb**: aaa, bbb -> hanya masukan pihak dari yang bukan dari DJPb dan Pemda.
 
 **Pemda**: aaa, bbb -> hanya masukan pihak dari Pemda.
+
+**Bidang**: ...
+
+**Publikasi/Komunikasi**: Ya atau tidak, karena ...
 
 **Forum/Tim di Daerah**: Ya, karena ...
 

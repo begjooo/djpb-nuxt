@@ -3,12 +3,14 @@ export interface DriveFile {
 };
 
 export interface SharepointFile {
-  id: string,
-  name: string,
-  type: string,
-  itemId: string,
-  children?: SharepointFile[],
-  fields?: any,
+  id: String;
+  name: String;
+  type: String;
+  children?: SharepointFile[];
+  downloadUrl?: String;
+  itemId?: String;
+  fields?: any;
+  mimeType?: String;
 };
 
 export interface SiteColumn {

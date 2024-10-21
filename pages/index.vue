@@ -6,7 +6,7 @@ const {
 
 const data = useState('watcher-var');
 
-onMounted(() => usePolling(1000));
+onMounted(() => usePolling(10000));
 
 </script>
 
