@@ -536,13 +536,13 @@ export async function hitungNilaiSubstantif(file: DriveFile): Promise<any> {
       + nilaiPublikasi.nilaiAkhir + nilaiKegiatanPemda.nilaiAkhir 
       + nilaiKegiatanForum.nilaiAkhir + nilaiInovasi.nilaiAkhir
       + nilaiKegiatanHighLevel.nilaiAkhir + nilaiRekomendasi.nilaiAkhir;
+    
     hasilAnalisis.nilai = nilaiSubstantif;
-    nilaiSubstantif = nilaiSubstantif * 0.6;
+    hasilAnalisis.nilaiAkhir = nilaiSubstantif * 0.6;
   } else {
-    nilaiSubstantif = parseFloat(file.fields['NilaiSubstantif']);
+    const nilaiAi = JSON.parse(file.fields['NilaiAI']);
+    hasilAnalisis = nilaiAi.substantif;
   };
-  
-  hasilAnalisis.nilaiAkhir = nilaiSubstantif;
   
   return hasilAnalisis;
 };

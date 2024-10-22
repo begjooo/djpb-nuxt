@@ -192,11 +192,12 @@ export async function hitungNilaiAdministratif(file: DriveFile): Promise<any> {
   
     nilaiAdministratif = (nilaiFormat.nilai * 0.2) + (nilaiDesain * 0.3) +
       (nilaiPenulisan * 0.3);
-    nilaiAdministratif = nilaiAdministratif * 0.4;
+
+    hasilAnalisis.nilaiAkhir = nilaiAdministratif * 0.4;
   } else {
-    nilaiAdministratif = parseFloat(file.fields['NilaiAdministratif']);
+    const nilaiAi = JSON.parse(file.fields['NilaiAI']);
+    hasilAnalisis = nilaiAi.administratif;
   };
-  const nilaiAkhir = nilaiAdministratif;
-  hasilAnalisis.nilaiAkhir = nilaiAkhir;
+  
   return hasilAnalisis;
 };

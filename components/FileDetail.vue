@@ -1,13 +1,14 @@
 <script setup lang="ts">
 
 const props = defineProps<{ file: SharepointItem }>();
-const file = props.file;
+let file = props.file;
 
 const daftarKegiatan = ref(JSON.parse(file.fields['JSONKegiatanNonPihak']));
 const detailKegiatanRef: any = ref('');
 const analisisKegiatanRef: any = ref('');
 
 const hasilAi = ref(JSON.parse(file.fields['NilaiAI']));
+console.log(hasilAi)
 
 async function getKegiatan(namaKegiatan: string){
   const { rincianKegiatan, analisisKegiatan } = await useRincianKegiatan(file.id, namaKegiatan);
@@ -21,6 +22,40 @@ const displayKegiatanHighLevel = ref(false);
 const displayKegiatanPublikasi = ref(false);
 const displayKegiatanForum = ref(false);
 const displayKegiatanInovatif= ref(false);
+
+const nilaiWaktu: number = ref();
+const nilaiFormat: number = ref();
+const nilaiDesain: number = ref();
+const nilaiPenulisan: number = ref();
+const nilaiNonDjpb: number = ref();
+const nilaiPemda: number = ref();
+const nilaiPejabat: number = ref();
+const nilaiBidang: number = ref();
+const nilaiPublikasi: number = ref();
+const nilaiForum: number = ref();
+const nilaiInovasi: number = ref();
+const nilaiRekomendasi: number = ref();
+
+async function editNilai(input: number, field: string){
+  if(typeof(input) === 'number'){
+    await useRevisiColumnValue(file.id, field, input);
+    const updateValue = await useDriveItem(file.id);
+    const jsonUpdateValue = JSON.parse(updateValue.fields['NilaiAI']);
+    hasilAi.value = jsonUpdateValue;
+    nilaiWaktu.value = null;
+    nilaiFormat.value = null;
+    nilaiDesain.value = null;
+    nilaiPenulisan.value = null;
+    nilaiNonDjpb.value = null;
+    nilaiPemda.value = null;
+    nilaiPejabat.value = null;
+    nilaiBidang.value = null;
+    nilaiPublikasi.value = null;
+    nilaiForum.value = null;
+    nilaiInovasi.value = null;
+    nilaiRekomendasi.value = null;
+  };
+};
 
 </script>
 
@@ -42,12 +77,25 @@ const displayKegiatanInovatif= ref(false);
       <div class="p-1 border text-center content-center">Ketepatan Waktu</div>
 
       <div class="p-1 border col-span-3">
-        <div>Batas Waktu Triwulan <b>{{ new Date(hasilAi.ketepatanWaktu.batas).toISOString().split('T')[0] }}</b></div>
-        <div>Tanggal Pengumpulan Laporan <b>{{ new Date(hasilAi.ketepatanWaktu.pengumpulan).toISOString().split('T')[0] }}</b></div>
-        <div>Keterangan <b>{{ hasilAi.ketepatanWaktu.alasan }}</b></div>
+        <div v-if="hasilAi.ketepatanWaktu.batas && hasilAi.ketepatanWaktu.pengumpulan">
+          <div>Batas Waktu Triwulan <b>{{ new Date(hasilAi.ketepatanWaktu.batas).toISOString().split('T')[0] }}</b></div>
+          <div>Tanggal Pengumpulan Laporan <b>{{ new Date(hasilAi.ketepatanWaktu.pengumpulan).toISOString().split('T')[0] }}</b></div>
+          <div>Keterangan <b>{{ hasilAi.ketepatanWaktu.alasan }}</b></div>
+        </div>
+        <div v-else>
+          Batas TW dan waktu pengumpulan belum diisi.
+        </div>
       </div>
       <div class="p-1 border text-center content-center font-bold">{{ hasilAi.ketepatanWaktu.nilai }}</div>
-      <div class="p-1 border">Revisi</div>
+      <div class="p-1 border content-center">
+        <input type="text" class="border rounded border-gray-400 px-1 w-full" v-model.number="nilaiWaktu" />
+        <button 
+          @click="editNilai(nilaiWaktu, 'ketepatanWaktu')"
+          class="my-1 px-2 border rounded font-bold border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+          >
+          Revisi
+        </button>
+      </div>
 
       <div class="p-1 border text-center content-center row-span-3">Administratif</div>
 
@@ -68,21 +116,45 @@ const displayKegiatanInovatif= ref(false);
         <div><b>{{ hasilAi.administratif.format.alasan }}</b></div>
       </div>
       <div class="p-1 border text-center content-center font-bold">{{ hasilAi.administratif.format.nilai }}</div>
-      <div class="p-1 border">Revisi</div>
+      <div class="p-1 border content-center">
+        <input type="text" class="border rounded border-gray-400 px-1 w-full" v-model.number="nilaiFormat" />
+        <button 
+          @click="editNilai(nilaiFormat, 'format')"
+          class="my-1 px-2 border rounded font-bold border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+          >
+          Revisi
+        </button>
+      </div>
       
       <div class="p-1 border col-span-3">
         <div class="italic text-orange-600">Desain dan Layout</div>
         <div>{{ hasilAi.administratif.desain.alasan }}</div>
       </div>
       <div class="p-1 border text-center content-center font-bold">{{ hasilAi.administratif.desain.nilai }}</div>
-      <div class="p-1 border">Revisi</div>
+      <div class="p-1 border content-center">
+        <input type="text" class="border rounded border-gray-400 px-1 w-full" v-model.number="nilaiDesain" />
+        <button 
+          @click="editNilai(nilaiDesain, 'desain')"
+          class="my-1 px-2 border rounded font-bold border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+          >
+          Revisi
+        </button>
+      </div>
       
       <div class="p-1 border col-span-3">
         <div class="italic text-orange-600">Teknik Penulisan</div>
         <div>{{ hasilAi.administratif.penulisan.alasan }}</div>
       </div>
       <div class="p-1 border text-center content-center font-bold">{{ hasilAi.administratif.penulisan.nilai }}</div>
-      <div class="p-1 border">Revisi</div>
+      <div class="p-1 border content-center">
+        <input type="text" class="border rounded border-gray-400 px-1 w-full" v-model.number="nilaiPenulisan" />
+        <button 
+          @click="editNilai(nilaiPenulisan, 'penulisan')"
+          class="my-1 px-2 border rounded font-bold border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+          >
+          Revisi
+        </button>
+      </div>
 
       <div class="p-1 border text-center content-center row-span-8">Substantif</div>
 
@@ -107,7 +179,15 @@ const displayKegiatanInovatif= ref(false);
         </div>
       </div>
       <div class="p-1 border text-center content-center font-bold">{{ hasilAi.substantif.nondjpb.nilai }}</div>
-      <div class="p-1 border">Revisi</div>
+      <div class="p-1 border content-center">
+        <input type="text" class="border rounded border-gray-400 px-1 w-full" v-model.number="nilaiNonDjpb" />
+        <button 
+          @click="editNilai(nilaiNonDjpb, 'nondjpb')"
+          class="my-1 px-2 border rounded font-bold border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+          >
+          Revisi
+        </button>
+      </div>
 
       <div class="p-1 border col-span-3">
         <div class="italic text-orange-600">Kegiatan bersama Pemerintah Daerah</div>
@@ -130,7 +210,15 @@ const displayKegiatanInovatif= ref(false);
         </div>
       </div>
       <div class="p-1 border text-center content-center font-bold">{{ hasilAi.substantif.pemda.nilai }}</div>
-      <div class="p-1 border">Revisi</div>
+      <div class="p-1 border content-center">
+        <input type="text" class="border rounded border-gray-400 px-1 w-full" v-model.number="nilaiPemda" />
+        <button 
+          @click="editNilai(nilaiPemda, 'pemda')"
+          class="my-1 px-2 border rounded font-bold border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+          >
+          Revisi
+        </button>
+      </div>
 
       <div class="p-1 border col-span-3">
         <div class="italic text-orange-600">Kegiatan High Level Meeting</div>
@@ -160,7 +248,15 @@ const displayKegiatanInovatif= ref(false);
         </div>
       </div>
       <div class="p-1 border text-center content-center font-bold">{{ hasilAi.substantif.pejabat.nilai }}</div>
-      <div class="p-1 border">Revisi</div>
+      <div class="p-1 border content-center">
+        <input type="text" class="border rounded border-gray-400 px-1 w-full" v-model.number="nilaiPejabat" />
+        <button 
+          @click="editNilai(nilaiPejabat, 'pejabat')"
+          class="my-1 px-2 border rounded font-bold border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+          >
+          Revisi
+        </button>
+      </div>
 
       <div class="p-1 border col-span-3">
         <div class="italic text-orange-600">Variasi Bidang Kegiatan</div>
@@ -170,7 +266,15 @@ const displayKegiatanInovatif= ref(false);
         </div>
       </div>
       <div class="p-1 border text-center content-center font-bold">{{ hasilAi.substantif.bidang.nilai }}</div>
-      <div class="p-1 border">Revisi</div>
+      <div class="p-1 border content-center">
+        <input type="text" class="border rounded border-gray-400 px-1 w-full" v-model.number="nilaiBidang" />
+        <button 
+          @click="editNilai(nilaiBidang, 'bidang')"
+          class="my-1 px-2 border rounded font-bold border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+          >
+          Revisi
+        </button>
+      </div>
 
       <div class="p-1 border col-span-3">
         <div class="italic text-orange-600">Kegiatan Komunikasi atau Publikasi</div>
@@ -191,7 +295,15 @@ const displayKegiatanInovatif= ref(false);
         </div>
       </div>
       <div class="p-1 border text-center content-center font-bold">{{ hasilAi.substantif.publikasi.nilai }}</div>
-      <div class="p-1 border">Revisi</div>
+      <div class="p-1 border content-center">
+        <input type="text" class="border rounded border-gray-400 px-1 w-full" v-model.number="nilaiPublikasi" />
+        <button 
+          @click="editNilai(nilaiPublikasi, 'publikasi')"
+          class="my-1 px-2 border rounded font-bold border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+          >
+          Revisi
+        </button>
+      </div>
 
       <div class="p-1 border col-span-3">
         <div class="italic text-orange-600">Kegiatan Forum atau Tim di Daerah</div>
@@ -214,7 +326,15 @@ const displayKegiatanInovatif= ref(false);
         </div>
       </div>
       <div class="p-1 border text-center content-center font-bold">{{ hasilAi.substantif.forum.nilai }}</div>
-      <div class="p-1 border">Revisi</div>
+      <div class="p-1 border content-center">
+        <input type="text" class="border rounded border-gray-400 px-1 w-full" v-model.number="nilaiForum" />
+        <button 
+          @click="editNilai(nilaiForum, 'forum')"
+          class="my-1 px-2 border rounded font-bold border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+          >
+          Revisi
+        </button>
+      </div>
 
       <div class="p-1 border col-span-3">
         <div class="italic text-orange-600">Kegiatan yang bersifat Inovatif atau Tematik</div>
@@ -238,14 +358,30 @@ const displayKegiatanInovatif= ref(false);
         </div>
       </div>
       <div class="p-1 border text-center content-center font-bold">{{ hasilAi.substantif.inovasi.nilai }}</div>
-      <div class="p-1 border">Revisi</div>
+      <div class="p-1 border content-center">
+        <input type="text" class="border rounded border-gray-400 px-1 w-full" v-model.number="nilaiInovasi" />
+        <button 
+          @click="editNilai(nilaiInovasi, 'inovasi')"
+          class="my-1 px-2 border rounded font-bold border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+          >
+          Revisi
+        </button>
+      </div>
 
       <div class="p-1 border col-span-3">
         <div class="italic text-orange-600">Rekomendasi</div>
         <div>{{ hasilAi.substantif.rekomendasi.alasan }}</div>
       </div>
       <div class="p-1 border text-center content-center font-bold">{{ hasilAi.substantif.rekomendasi.nilai }}</div>
-      <div class="p-1 border">Revisi</div>
+      <div class="p-1 border content-center">
+        <input type="text" class="border rounded border-gray-400 px-1 w-full" v-model.number="nilaiRekomendasi" />
+        <button 
+          @click="editNilai(nilaiRekomendasi, 'rekomendasi')"
+          class="my-1 px-2 border rounded font-bold border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+          >
+          Revisi
+        </button>
+      </div>
       
       <div class="p-1 border text-center content-center">Nilai Total</div>
 
