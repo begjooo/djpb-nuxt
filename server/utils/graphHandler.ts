@@ -131,7 +131,7 @@ class GraphHandler {
     console.log(`check mandatory columns in SharePoint Sites`);
     const columnList = await this.getSiteColumns();
     const columnListName = columnList.map((column: any) => column.displayName);
-    const notExistColumns = mandatoryColumns.filter((columnName: any) => {
+    const notExistColumns = this.mandatoryColumns.filter((columnName: any) => {
       return !columnListName.includes(columnName);
     });
 
@@ -290,6 +290,7 @@ const mandatoryColumns = [
   "Nilai Administratif",
   "Nilai Substantif",
   "Nilai",
+  "Nilai AI",
   "Masalah atau Isu",
   "Kegiatan",
   "Kesimpulan dan Rekomendasi",

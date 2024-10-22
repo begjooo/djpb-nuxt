@@ -19,6 +19,12 @@ async function updateNilai(driveItemId: string){
   await useFilesInFolder(currentFolderId.value);
 };
 
+async function updateNilaiDanRincian(driveItemId: string){
+  console.log(`update nilai dan rincian: ${driveItemId}`);
+  await useUpdateNilaiDanRincian(driveItemId);
+  await useFilesInFolder(currentFolderId.value);
+};
+
 async function updateTanggal(driveItemId: string, tanggal: string, columnName: string){
   console.log(`update ${columnName}: ${driveItemId}`);
   console.log(`${columnName}: ${tanggal}`);
@@ -63,6 +69,12 @@ async function hapusNilai(itemId: string, columnName: string){
           <tr v-for="file in fkpknInFolder" class="border-y-2 text-center hover:font-bold hover:bg-blue-100">
             <td class="text-right">
               <NuxtLink :to="`/nilai/${file['id']}`" class="pr-2">{{ file['name'] }}</NuxtLink>
+              <UTooltip text="Update Nilai dan Rincian" class="align-middle mx-1">
+                <UButton
+                  trailing-icon="i-material-symbols:refresh" size="2xs"
+                  class="bg-transparent text-green-600 border border-green-600 hover:bg-green-600 hover:text-white"
+                  @click="updateNilaiDanRincian(file['id'])" />
+              </UTooltip>
               <UTooltip text="Update Nilai" class="align-middle">
                 <UButton
                   trailing-icon="i-material-symbols:refresh" size="2xs"
